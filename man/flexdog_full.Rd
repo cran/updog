@@ -4,8 +4,8 @@
 \alias{flexdog_full}
 \title{Flexible genotyping for polyploids from next-generation sequencing data.}
 \usage{
-flexdog_full(refvec, sizevec, ploidy, model = c("hw", "bb", "norm", "ash",
-  "f1", "s1", "f1pp", "s1pp", "flex", "uniform"), verbose = TRUE,
+flexdog_full(refvec, sizevec, ploidy, model = c("norm", "hw", "bb", "ash",
+  "s1", "s1pp", "f1", "f1pp", "flex", "uniform"), verbose = TRUE,
   mean_bias = 0, var_bias = 0.7^2, mean_seq = -4.7, var_seq = 1,
   seq = 0.005, bias = 1, od = 0.001, update_bias = TRUE,
   update_seq = TRUE, update_od = TRUE, mode = NULL, use_cvxr = FALSE,
@@ -60,7 +60,7 @@ the allele frequency if \code{model = "hw"}. This should be
 \item{use_cvxr}{A logical. If \code{model = "ash"}, then do you want
 to use the EM algorithm
 (\code{FALSE}) or a convex optimization program using
-the package CVXR \code{TRUE}?
+the package CVXR (\code{TRUE})?
 Only available if CVXR is installed. Setting \code{use_cvxr} to
 \code{TRUE} is generally slower than setting it to \code{FALSE}.}
 
@@ -77,7 +77,7 @@ the mixing proportion for the uniform component
  when \code{model = "f1"}, \code{model = "f1pp"},
 \code{model = "s1"}, or \code{model = "s1pp"}.
 I would recommend some small
-value such at \code{10^-3}.}
+value such as \code{10^-3}.}
 
 \item{ashpen}{The penalty to put on the unimodal prior.
 Larger values shrink the unimodal prior towards the
@@ -85,13 +85,11 @@ discrete uniform distribution.}
 
 \item{p1ref}{The reference counts for the first parent if
 \code{model = "f1"} (or \code{model = "f1pp"}), or for
-the only parent if \code{model = "s1"} (or
-\code{model = "s1pp"}).}
+the only parent if \code{model = "s1"} (or \code{model = "s1pp"}).}
 
 \item{p1size}{The total counts for the first parent if
 \code{model = "f1"} (or \code{model = "f1pp"}),
-or for the only parent if \code{model = "s1"}
-(or \code{model = "s1pp"}).}
+or for the only parent if \code{model = "s1"} (or \code{model = "s1pp"}).}
 
 \item{p2ref}{The reference counts for the second parent if
 \code{model = "f1"} (or \code{model = "f1pp"}).}
@@ -122,16 +120,40 @@ An object of class \code{flexdog}, which consists
       genotype \code{i-1}. If \code{outliers = TRUE}, then this
       is conditional on the point not being an outlier.}
   \item{\code{par}}{A list of the final estimates of the parameters
-      of the genotype distribution. If \code{model = "hw"} then
-      this will consist of \code{alpha}, the allele frequency.
-      If \code{model = "f1"} or \code{model = "s1"} then this will
-      consist of the parent genotype(s), the value of \code{fs1_alpha}
-      (now just called \code{alpha}), and possibly the outlier
-      proportion \code{out_prop}. If
-      \code{model = "bb"} then this will consist of \code{alpha},
-      the allele frequency, and \code{tau}, the overdispersion parameter.
-      If \code{model = "norm"} then this will consist of \code{mu}, the
-      normal mean, and \code{sigma}, the normal standard deviation (not variance).}
+      of the genotype distribution. The elements included in \code{par}
+      depends on the value of \code{model}:
+      \describe{
+      \item{\code{model = "norm"}:}{\code{mu} is the normal mean and \code{sigma}
+          is the normal standard deviation (not variance).}
+      \item{\code{model = "hw"}:}{\code{alpha} is the major allele frequency.}
+      \item{\code{model = "bb"}:}{\code{alpha} is the major allele frequency and
+          \code{tau} is the overdisperion parameter (see the description of
+          \code{rho} in the Details of \code{\link{betabinom}}).}
+      \item{\code{model = "ash"}:}{\code{par} is an empty list.}
+      \item{\code{model = "s1"}:}{\code{pgeno} is the allele dosage of the parent and
+          \code{alpha} is the mixture proportion of the discrete uniform (included and
+          fixed at a small value mostly for numerical stability reasons). See the description
+          of \code{fs1_alpha} in \code{\link{flexdog_full}}.}
+      \item{\code{model = "s1pp"}:}{\code{pgeno} is the allele dosage of the parent and
+          \code{p1_pair_weights} contains a vector of mixing weights where element \code{i} is the
+          mixing proportion for the segregation distribution in row \code{i} of
+          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == pgeno, , drop = FALSE]}.}
+      \item{\code{model = "f1"}:}{\code{p1geno} is the allele dosage of the first parent,
+          \code{p2geno} is the allele dosage of the second parent, and \code{alpha}
+          is the mixture proportion of the discrete uniform (included and
+          fixed at a small value mostly for numerical stability reasons). See the description
+          of \code{fs1_alpha} in \code{\link{flexdog_full}}.}
+      \item{\code{model = "f1pp"}:}{\code{p1geno} is the allele dosage of the first parent,
+          \code{p2geno} is the allele dosage of the second parent,
+          \code{p1_pair_weights} contains a vector of mixing weights where element \code{i} is the
+          mixing proportion for the segregation distribution for parent 1 in row \code{i} of
+          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == p1geno, , drop = FALSE]},
+          and \code{p2_pair_weights} contains a vector of mixing weights where element \code{i} is the
+          mixing proportion for the segregation distribution for parent 2 in row \code{i} of
+          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == p2geno, , drop = FALSE]}.}
+      \item{\code{model = "flex"}:}{\code{par} is an empty list.}
+      \item{\code{model = "uniform"}:}{\code{par} is an empty list.}
+      }}
   \item{\code{geno}}{The posterior mode genotype. These are your
       genotype estimates.}
   \item{\code{maxpostprob}}{The maximum posterior probability. This
@@ -166,24 +188,38 @@ Genotype polyploid individuals from next generation
 sequencing (NGS) data while assuming the genotype distribution is one of
 several forms. \code{flexdog} does this while accounting for allele bias,
 overdispersion, sequencing error, and possibly outlying observations
-(if \code{model = "f1"} or \code{model = "s1"}).
+(if \code{model = "f1"} or \code{model = "s1"}). This function has more
+options than \code{\link{flexdog}} and is only meant for expert users.
 }
 \details{
 Possible values of the genotype distribution (values of \code{model}) are:
 \describe{
+  \item{\code{"norm"}}{A distribution whose genotype frequencies are proportional
+      to the density value of a normal with some mean and some standard deviation.
+      Unlike the \code{"bb"} and \code{"hw"} options, this will allow for
+      distributions both more and less dispersed than a binomial.
+      This seems to be the most robust to violations in modeling assumptions, and so is the
+      default.}
   \item{\code{"hw"}}{A binomial distribution that results from assuming that
       the population is in Hardy-Weinberg equilibrium (HWE). This actually does
       pretty well even when there are minor to moderate deviations from HWE.}
-  \item{\code{"bb"}}{A beta-binomial distribution. This is a overdispersed
-      version of "hw" and can be derived from a special case of the Balding-Nichols model.}
-  \item{\code{"norm"}}{A distribution whose genotype frequencies are proportional
-      to the density value of a normal with some mean and some standard deviation.
-      Unlike the "bb" option, this will allow for distributions less dispersed than a binomial.
-      This seems to be the most robust to violations in modeling assumptions, and so is the
-      default.}
-  \item{\code{"ash"}}{Any unimodal prior. This will run \code{ploidy} EM algorithms
-      with a different center during each optimization. It returns the center (and its fit)
-      with the highest likelihood.}
+  \item{\code{"bb"}}{A beta-binomial distribution. This is an overdispersed
+      version of \code{"hw"} and can be derived from a special case of the Balding-Nichols model.}
+  \item{\code{"ash"}}{Any unimodal prior. This can sometimes be sensitive to violations
+      in modeling assumptions, but tends to work better than the \code{"flex"} option.}
+  \item{\code{"s1"}}{This prior assumes the individuals are
+      all full-siblings resulting
+      from one generation of selfing. I.e. there is only
+      one parent. This model assumes
+      a particular type of meiotic behavior: polysomic
+      inheritance with
+      bivalent, non-preferential pairing.
+      Since this is a pretty strong and well-founded prior,
+      we allow \code{outliers = TRUE} when \code{model = "s1"}.}
+  \item{\code{"s1pp"}}{The same as \code{"s1"} but accounts for possible
+      (and arbitrary levels of) preferential
+      pairing during meiosis. The only supported values of \code{ploidy} right now for
+      this option are \code{4} and \code{6}.}
   \item{\code{"f1"}}{This prior assumes the individuals are all
       full-siblings resulting
       from one generation of a bi-parental cross.
@@ -194,27 +230,15 @@ Possible values of the genotype distribution (values of \code{model}) are:
       a pretty strong
       and well-founded prior, we allow \code{outliers = TRUE}
       when \code{model = "f1"}.}
-  \item{\code{"s1"}}{This prior assumes the individuals are
-      all full-siblings resulting
-      from one generation of selfing. I.e. there is only
-      one parent. This model assumes
-      a particular type of meiotic behavior: polysomic
-      inheritance with
-      bivalent, non-preferential pairing.
-      Since this is a pretty strong and well-founded prior,
-      we allow \code{outliers = TRUE} when \code{model = "s1"}.}
   \item{\code{"f1pp"}}{The same as \code{"f1"} but accounts for possible
       (and arbitrary levels of) preferential
-      pairing during meiosis.}
-  \item{\code{"s1pp"}}{The same as \code{"s1"} but accounts for
-      possible preferential (and arbitrary levels of)
-      pairing during meiosis.}
+      pairing during meiosis. This option is mostly untested for values of \code{ploidy}
+      greater than \code{6}.}
   \item{\code{"flex"}}{Generically any categorical distribution. Theoretically,
       this works well if you have a lot of individuals. In practice, it seems to
       be less robust to violations in modeling assumptions.}
   \item{\code{"uniform"}}{A discrete uniform distribution. This should never
-      be used in practice. Please don't email me that \code{flexdog} doesn't
-      work if you use this option.}
+      be used in practice.}
 }
 
 You might think a good default is \code{model = "uniform"} because it is
@@ -224,13 +248,13 @@ the allele bias and sequencing error rates so that the estimated genotypes
 are approximately uniform (since we are assuming that they are approximately
 uniform). This will usually result in unintuitive genotyping since most
 populations don't have a uniform genotype distribution.
-I include it as an option only for completeness. Please, please don't use it.
+I include it as an option only for completeness. Please don't use it.
 
 The value of \code{prop_mis} is a very intuitive measure for
 the quality of the SNP. \code{prop_mis} is the posterior
 proportion of individuals mis-genotyped. So if you want only SNPS
 that accurately genotype, say, 95\% of the individuals, you could
-discard all SNPs with a \code{prop_mis} under \code{0.95}.
+discard all SNPs with a \code{prop_mis} over \code{0.05}.
 
 The value of \code{maxpostprob} is a very intuitive measure
 for the quality of the genotype estimate of an individual.
@@ -238,7 +262,11 @@ This is the posterior probability of correctly genotyping
 the individual when using \code{geno} (the posterior mode)
 as the genotype estimate. So if you want to correctly genotype,
 say, 95\% of individuals, you could discard all individuals
-with a \code{maxpostprob} of under \code{0.95}.
+with a \code{maxpostprob} of under \code{0.95}. However, if you are
+just going to impute missing genotypes later, you might consider
+not discarding any individuals as \code{flexdog}'s genotype estimates will
+probably be more accurate than other more naive approaches, such
+as imputing using the grand mean.
 
 In most datasets I've examined, allelic bias is a major issue. However,
 you may fit the model assuming no allelic bias by setting
@@ -279,6 +307,28 @@ Antonio Augusto Franco Garcia, and Matthew Stephens. 2018.
 "Harnessing Empirical Bayes and Mendelian Segregation
 for Genotyping Autopolyploids from Messy Sequencing Data."
 \emph{bioRxiv}. Cold Spring Harbor Laboratory. doi:10.1101/281550.
+}
+\seealso{
+Run \code{browseVignettes(package = "updog")} in R for example usage.
+    Other useful functions include:
+\describe{
+    \item{\code{\link{flexdog}}}{For a more user-friendly version of
+          \code{flexdog_full}.}
+    \item{\code{\link{rgeno}}}{For simulating genotypes under the allowable
+          prior models in \code{flexdog}.}
+    \item{\code{\link{rflexdog}}}{For simulating read-counts under the
+          assumed likelihood model in \code{flexdog}.}
+    \item{\code{\link{plot.flexdog}}}{For plotting the output of
+          \code{flexdog}.}
+    \item{\code{\link{oracle_mis}}}{For calculating the oracle genotyping
+          error rates. This is useful for read-depth calculations
+          \emph{before} collecting data. After you have data, using
+          the value of \code{prop_mis} is better.}
+    \item{\code{\link{oracle_cor}}}{For calculating the correlation
+          between the true genotypes and an oracle estimator
+          (useful for read-depth calculations \emph{before}
+          collecting data).}
+}
 }
 \author{
 David Gerard

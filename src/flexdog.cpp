@@ -19,12 +19,13 @@ NumericVector get_probk_vec(NumericVector pivec, std::string model, double mode)
   int K = pivec.length() - 1;
   NumericVector probk_vec(K + 1);
   if ((model == "flex") | (model == "hw") | (model == "f1") | (model == "s1") | (model == "uniform") |
-    (model == "bb") | (model == "norm") | (model == "f1pp") | (model == "s1pp")) {
+    (model == "bb") | (model == "norm") | (model == "f1pp") | (model == "s1pp") |
+    (model == "f1ppdr") | (model == "s1ppdr")) {
     probk_vec = pivec;
   } else if (model == "ash") {
     double denom; // what you divide the pi's by.
     for (int i = 0; i <= K; i++) { // iterate through pivec
-      if (abs((double)i - mode) < TOL) {
+      if (std::fabs((double)i - mode) < TOL) {
         probk_vec(i) += pivec(i);
       } else if (i < mode) {
         denom = (double)(std::floor(mode) - i + 1);
@@ -41,7 +42,7 @@ NumericVector get_probk_vec(NumericVector pivec, std::string model, double mode)
       }
     }
   } else {
-    Rcpp::stop("get_probk_vec: model must be one of 'flex', 'ash', 'hw', 'bb', 'norm', 'f1', 's1', 'f1pp', 's1pp', or 'uniform'");
+    Rcpp::stop("get_probk_vec: model must be one of 'flex', 'ash', 'hw', 'bb', 'norm', 'f1', 's1', 'f1pp', 's1pp', 'f1ppdr', 's1ppdr', or 'uniform'");
   }
   return probk_vec;
 }
@@ -62,7 +63,7 @@ NumericMatrix get_inner_weights(int ploidy, double mode) {
   NumericMatrix inner_weights(ploidy + 1, ploidy + 1);
   double denom;
   for (int i = 0; i <= ploidy; i++) {
-    if (std::abs((double)i - mode) < TOL) {
+    if (std::fabs((double)i - mode) < TOL) {
       inner_weights(i, i) = 1.0;
     } else if (i < mode) {
       denom = (double)(std::floor(mode) - i + 1);
@@ -334,7 +335,7 @@ arma::vec uni_em(arma::vec weight_vec,
                   << std::endl;
       Rcpp::stop("uni_em: Objective is not increasing.\n");
     }
-    err = std::abs(obj - old_obj);
+    err = std::fabs(obj - old_obj);
     index++;
 
   }

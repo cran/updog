@@ -60,8 +60,39 @@ test_that("flexdog works", {
                                  ploidy = ploidy, model = "uniform", verbose = FALSE))
   expect_equal(fout$gene_dist, rep(1 / (ploidy + 1), ploidy + 1))
   pl <- plot(fout)
+  # suppressWarnings(
+  # fout <- flexdog(refvec = refvec, sizevec = sizevec,
+  #                 p2ref = 10, p2size = 20,
+  #                 ploidy = ploidy, model = "f1ppdr", verbose = FALSE)
+  # )
+
+  fout <- flexdog(refvec = refvec, sizevec = sizevec,
+                  p1ref = 10, p1size = 20,
+                  ploidy = ploidy, model = "s1pp", verbose = FALSE)
 }
 )
+
+test_that("f1ppdr works on SNP3", {
+  skip("f1ppdr not quite yet")
+  data("snpdat")
+  fout <- flexdog_full(refvec  = snpdat$counts[snpdat$snp == "SNP3"],
+                       sizevec = snpdat$size[snpdat$snp == "SNP3"],
+                       ploidy  = 6,
+                       model   = "f1ppdr",
+                       verbose = FALSE, bias = 2)
+
+  fout <- flexdog(refvec  = snpdat$counts[snpdat$snp == "SNP1"],
+                       sizevec = snpdat$size[snpdat$snp == "SNP1"],
+                       ploidy  = 6,
+                       model   = "f1ppdr",
+                       verbose = FALSE)
+
+  fout <- flexdog(refvec  = snpdat$counts[snpdat$snp == "SNP3"],
+                  sizevec = snpdat$size[snpdat$snp == "SNP3"],
+                  ploidy  = 6,
+                  model   = "s1pp",
+                  verbose = FALSE)
+})
 
 test_that("get_uni_rep is inverse of get_probk_vec", {
   probvec <- dbinom(0:6, 6, 0.4)

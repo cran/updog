@@ -1,4 +1,7 @@
+// [[Rcpp::interfaces(r, cpp)]]
+
 #include "mupdog.h"
+#include <iomanip> // for std::setprecision()
 
 //' Adjusts allele dosage \code{p} by the sequencing error rate \code{eps}.
 //'
@@ -11,10 +14,12 @@
 //' @author David Gerard
 // [[Rcpp::export]]
 double eta_double(double p, double eps) {
-  if ((p < -TOL) or (1.0 - p < -TOL)) {
+  if ((p < -1.0 * TOL) or (1.0 - p < -1.0 * TOL)) {
+    Rcpp::Rcout << "p:" << std::setprecision(15) << p << std::endl;
     Rcpp::stop("eta_double: p must be between 0 and 1");
   }
-  if ((eps < -TOL) or (1.0 - eps < -TOL)) {
+  if ((eps < -1.0 * TOL) or (1.0 - eps < -1.0 * TOL)) {
+    Rcpp::Rcout << "eps: " << std::setprecision(15) << eps << std::endl;
     Rcpp::stop("eta_double: eps must be between 0 and 1");
   }
 
@@ -131,6 +136,8 @@ NumericVector xi_fun(NumericVector p, NumericVector eps, NumericVector h) {
 //'     of the elements in \code{x}.
 //'
 //' @author David Gerard
+//'
+//' @export
 // [[Rcpp::export]]
 double log_sum_exp(NumericVector x) {
   double max_x = Rcpp::max(x);
@@ -153,6 +160,7 @@ double log_sum_exp(NumericVector x) {
 //'
 //' @author David Gerard
 //'
+//' @export
 // [[Rcpp::export]]
 double log_sum_exp_2(double x, double y) {
   double z = std::max(x, y);
@@ -172,6 +180,7 @@ double log_sum_exp_2(double x, double y) {
 //' @return The logit of \code{x}.
 //'
 //' @author David Gerard
+//'
 // [[Rcpp::export]]
 double logit(double x) {
   if ((x < TOL) | ((1.0 - x) < TOL)) {

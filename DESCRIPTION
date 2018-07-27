@@ -1,6 +1,6 @@
 Package: updog
 Title: Flexible Genotyping for Polyploids
-Version: 1.0.0
+Version: 1.0.1
 Date: 2018-06-11
 Authors@R: person("David", "Gerard", email = "gerard.1787@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9450-5023"))
 Description: Implements empirical Bayes approaches to genotype
@@ -30,8 +30,8 @@ Suggests: covr, testthat, SuppDists, Rmpfr, CVXR, knitr, rmarkdown,
         tidyverse
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2018-07-09 14:14:56 UTC; david
+Packaged: 2018-07-27 16:38:38 UTC; david
 Author: David Gerard [aut, cre] (<https://orcid.org/0000-0001-9450-5023>)
 Maintainer: David Gerard <gerard.1787@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-07-10 16:20:03 UTC
+Date/Publication: 2018-07-27 17:50:06 UTC
