@@ -4,10 +4,11 @@
 \alias{flexdog}
 \title{Flexible genotyping for polyploids from next-generation sequencing data.}
 \usage{
-flexdog(refvec, sizevec, ploidy, model = c("norm", "hw", "bb", "ash", "s1",
-  "s1pp", "f1", "f1pp", "flex", "uniform"), p1ref = NULL, p1size = NULL,
-  p2ref = NULL, p2size = NULL, bias_init = exp(c(-1, -0.5, 0, 0.5, 1)),
-  verbose = TRUE, outliers = FALSE, ...)
+flexdog(refvec, sizevec, ploidy, model = c("norm", "hw", "bb", "ash",
+  "s1", "s1pp", "f1", "f1pp", "flex", "uniform", "custom"), p1ref = NULL,
+  p1size = NULL, p2ref = NULL, p2size = NULL, snpname = NULL,
+  bias_init = exp(c(-1, -0.5, 0, 0.5, 1)), verbose = TRUE,
+  outliers = FALSE, prior_vec = NULL, ...)
 }
 \arguments{
 \item{refvec}{A vector of counts of reads of the reference allele.}
@@ -34,6 +35,9 @@ or for the only parent if \code{model = "s1"} (or \code{model = "s1pp"}).}
 \item{p2size}{The total counts for the second parent if
 \code{model = "f1"} (or \code{model = "f1pp"}).}
 
+\item{snpname}{A string. The name of the SNP under consideration.
+This is just returned in the \code{input} list for your reference.}
+
 \item{bias_init}{A vector of initial values for the bias parameter
 over the multiple runs of \code{flexdog_full}.}
 
@@ -44,6 +48,11 @@ over the multiple runs of \code{flexdog_full}.}
 (\code{TRUE}) or not (\code{FALSE}). Only supported when
 \code{model = "f1"} or \code{model = "s1"}. I wouldn't
 recommend it for any other model anyway.}
+
+\item{prior_vec}{The pre-specified genotype distribution. Only used if
+\code{model = "custom"} and must otherwise be \code{NULL}. If specified,
+then it should be a vector of length \code{ploidy + 1} with
+non-negative elements that sum to 1.}
 
 \item{...}{Additional parameters to pass to \code{\link{flexdog_full}}.}
 }
@@ -98,6 +107,7 @@ An object of class \code{flexdog}, which consists
           \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == p2geno, , drop = FALSE]}.}
       \item{\code{model = "flex"}:}{\code{par} is an empty list.}
       \item{\code{model = "uniform"}:}{\code{par} is an empty list.}
+      \item{\code{model = "custom"}:}{\code{par} is an empty list.}
       }}
   \item{\code{geno}}{The posterior mode genotype. These are your
       genotype estimates.}
@@ -119,6 +129,7 @@ An object of class \code{flexdog}, which consists
   \item{\code{input$p1size}}{The value of \code{p1size} provided by the user.}
   \item{\code{input$p2ref}}{The value of \code{p2ref} provided by the user.}
   \item{\code{input$p2size}}{The value of \code{p2size} provided by the user.}
+  \item{\code{input$snpname}}{The value of \code{snpname} provided by the user.}
   \item{\code{prop_mis}}{The posterior proportion of individuals
       genotyped incorrectly.}
   \item{\code{out_prop}}{The estimated proportion of points that
@@ -146,7 +157,9 @@ Possible values of the genotype distribution (values of \code{model}) are:
       default.}
   \item{\code{"hw"}}{A binomial distribution that results from assuming that
       the population is in Hardy-Weinberg equilibrium (HWE). This actually does
-      pretty well even when there are minor to moderate deviations from HWE.}
+      pretty well even when there are minor to moderate deviations from HWE.
+      Though it does not perform as well as the `"norm"` option when there
+      are severe deviations from HWE.}
   \item{\code{"bb"}}{A beta-binomial distribution. This is an overdispersed
       version of \code{"hw"} and can be derived from a special case of the Balding-Nichols model.}
   \item{\code{"ash"}}{Any unimodal prior. This can sometimes be sensitive to violations
@@ -180,9 +193,12 @@ Possible values of the genotype distribution (values of \code{model}) are:
       greater than \code{6}.}
   \item{\code{"flex"}}{Generically any categorical distribution. Theoretically,
       this works well if you have a lot of individuals. In practice, it seems to
-      be less robust to violations in modeling assumptions.}
+      be much less robust to violations in modeling assumptions.}
   \item{\code{"uniform"}}{A discrete uniform distribution. This should never
       be used in practice.}
+  \item{\code{"custom"}}{A pre-specified prior distribution. You specify
+      it using the \code{prior_vec} argument. You should almost never
+      use this option in practice.}
 }
 
 You might think a good default is \code{model = "uniform"} because it is
@@ -267,11 +283,7 @@ plot(fout)
 
 }
 \references{
-Gerard, David, Luis Felipe Ventorim Ferrao,
-Antonio Augusto Franco Garcia, and Matthew Stephens. 2018.
-"Harnessing Empirical Bayes and Mendelian Segregation
-for Genotyping Autopolyploids from Messy Sequencing Data."
-\emph{bioRxiv}. Cold Spring Harbor Laboratory. doi:10.1101/281550.
+Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).
 }
 \seealso{
 Run \code{browseVignettes(package = "updog")} in R for example usage.

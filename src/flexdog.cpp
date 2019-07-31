@@ -20,7 +20,7 @@ NumericVector get_probk_vec(NumericVector pivec, std::string model, double mode)
   NumericVector probk_vec(K + 1);
   if ((model == "flex") | (model == "hw") | (model == "f1") | (model == "s1") | (model == "uniform") |
     (model == "bb") | (model == "norm") | (model == "f1pp") | (model == "s1pp") |
-    (model == "f1ppdr") | (model == "s1ppdr")) {
+    (model == "f1ppdr") | (model == "s1ppdr") | (model == "custom")) {
     probk_vec = pivec;
   } else if (model == "ash") {
     double denom; // what you divide the pi's by.
@@ -42,7 +42,7 @@ NumericVector get_probk_vec(NumericVector pivec, std::string model, double mode)
       }
     }
   } else {
-    Rcpp::stop("get_probk_vec: model must be one of 'flex', 'ash', 'hw', 'bb', 'norm', 'f1', 's1', 'f1pp', 's1pp', 'f1ppdr', 's1ppdr', or 'uniform'");
+    Rcpp::stop("get_probk_vec: model must be one of 'flex', 'ash', 'hw', 'bb', 'norm', 'f1', 's1', 'f1pp', 's1pp', 'f1ppdr', 's1ppdr', 'uniform', or 'custom'");
   }
   return probk_vec;
 }
@@ -157,7 +157,9 @@ double flexdog_obj(NumericVector probk_vec,
                    double mean_bias,
                    double var_bias,
                    double mean_seq,
-                   double var_seq) {
+                   double var_seq,
+                   double mean_od,
+                   double var_od) {
   // Check input -----------------------------------------------------------
   int nind = refvec.length();
   if (nind != sizevec.length()) {
@@ -187,6 +189,7 @@ double flexdog_obj(NumericVector probk_vec,
   // Penalties --------------------------------------------------------------
   obj = obj + pen_bias(bias, mean_bias, var_bias);
   obj = obj + pen_seq_error(seq, mean_seq, var_seq);
+  obj = obj + pen_seq_error(od, mean_od, var_od);
   return obj;
 }
 
@@ -307,6 +310,8 @@ arma::vec uni_em(arma::vec weight_vec,
     // calculate objective and update stopping criteria
     obj = uni_obj(pivec, weight_vec, lmat, lambda);
     if (obj < old_obj - TOL) {
+      break; // this almost always is OK because other bias starting points will work
+
       Rcpp::Rcout << "Index: "
                   << index
                   << std::endl

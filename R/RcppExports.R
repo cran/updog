@@ -209,8 +209,8 @@ get_wik_mat <- function(probk_vec, refvec, sizevec, ploidy, seq, bias, od) {
 #' @return The objective (marginal log-likelihood) used in
 #'     \code{\link{flexdog_full}}.
 #'
-flexdog_obj <- function(probk_vec, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq) {
-    .Call('_updog_flexdog_obj', PACKAGE = 'updog', probk_vec, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq)
+flexdog_obj <- function(probk_vec, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od) {
+    .Call('_updog_flexdog_obj', PACKAGE = 'updog', probk_vec, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od)
 }
 
 #' Objective function optimized by \code{\link{uni_em}}.
@@ -271,10 +271,10 @@ f1_obj <- function(alpha, pvec, weight_vec) {
 #' Gradient for \code{\link{obj_for_mu_sigma2}} with respect for \code{mu} and \code{sigma2}.
 #'
 #' @inheritParams obj_for_mu_sigma2
-#' 
-#' @return A vector of length 2 * nind of numerics. 
+#'
+#' @return A vector of length 2 * nind of numerics.
 #'     The first element n elements are the partial derivatives with respect
-#'     to \code{mu} and the second n elements are the 
+#'     to \code{mu} and the second n elements are the
 #'     partial derivatives with respect to \code{sigma2}
 #'     in \code{\link{obj_for_mu_sigma2}}.
 #'
@@ -306,7 +306,7 @@ grad_for_mu_sigma2_wrapper <- function(muSigma2, phifk_mat, cor_inv, log_bb_dens
 #' @param sigma2_h The variance of the log-bias.
 #'
 #' @seealso \code{\link{pen_bias}} which this is a derivative for.
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -322,7 +322,7 @@ dpen_dh <- function(h, mu_h, sigma2_h) {
 #' @param sigma2_eps The variance of the logit of the sequencing error rate.
 #'
 #' @seealso \code{\link{pen_seq_error}} which this is a derivative for.
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -352,7 +352,7 @@ dlbeta_dc <- function(x, n, xi, c) {
 #' Derivative of \eqn{c = (1 - \tau) / \tau} with respect to \eqn{\tau}.
 #'
 #' @param tau The overdispersion parameter.
-#' 
+#'
 #' @return A double.
 #'
 #' @seealso \code{\link{dlbeta_dc}}, \code{\link{dlbeta_dtau}}
@@ -371,7 +371,7 @@ dc_dtau <- function(tau) {
 #' @param p The allele dosage.
 #' @param eps The sequencing error rate
 #' @param h The bias parameter.
-#' 
+#'
 #' @return A double.
 #'
 #' @seealso \code{\link{dlbeta_dc}}, \code{\link{dc_dtau}},
@@ -384,7 +384,7 @@ dlbeta_dtau <- function(x, n, p, eps, h, tau) {
 
 #' Derivative of the log-betabinomial density with respect to the
 #' mean of the underlying beta.
-#' 
+#'
 #' @return A double.
 #'
 #' @inheritParams dlbeta_dtau
@@ -396,7 +396,7 @@ dlbeta_dxi <- function(x, n, xi, tau) {
 }
 
 #' Derivative of xi-function with respect to bias parameter.
-#' 
+#'
 #' @return A double.
 #'
 #' @param p The dosage (between 0 and 1).
@@ -411,7 +411,7 @@ dxi_dh <- function(p, eps, h) {
 #' Derivative of log-betabinomial density with respect to bias parameter.
 #'
 #' @inheritParams dlbeta_dtau
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -423,7 +423,7 @@ dlbeta_dh <- function(x, n, p, eps, h, tau) {
 #'
 #' @param h The bias parameter.
 #' @param f The post-sequencing error rate adjusted probability of an A.
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -435,7 +435,7 @@ dxi_df <- function(h, f) {
 #'
 #' @param p The allele dosage.
 #' @param eps The sequencing error rate.
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -447,7 +447,7 @@ df_deps <- function(p, eps) {
 #' sequencing error rate.
 #'
 #' @inheritParams dlbeta_dtau
-#' 
+#'
 #' @return A double.
 #'
 #' @author David Gerard
@@ -456,14 +456,14 @@ dlbeta_deps <- function(x, n, p, eps, h, tau) {
 }
 
 #' Gradient for \code{\link{obj_for_eps}}.
-#' 
+#'
 #' @return A double.
 #'
 #' @inheritParams obj_for_eps
 #'
 #' @author David Gerard
-grad_for_eps <- function(parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, wmat, update_bias = TRUE, update_seq = TRUE, update_od = TRUE) {
-    .Call('_updog_grad_for_eps', PACKAGE = 'updog', parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, wmat, update_bias, update_seq, update_od)
+grad_for_eps <- function(parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od, wmat, update_bias = TRUE, update_seq = TRUE, update_od = TRUE) {
+    .Call('_updog_grad_for_eps', PACKAGE = 'updog', parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od, wmat, update_bias, update_seq, update_od)
 }
 
 #' Gradient for \code{\link{obj_for_weighted_lbb}}.
@@ -503,7 +503,7 @@ grad_for_weighted_lnorm <- function(parvec, ploidy, weight_vec) {
 #' @param sigma2 The variational variance (not standard devation).
 #' @param alpha The allele frequency.
 #' @param rho The individual's overdispersion parameter.
-#' 
+#'
 #' @return The posterior probability of having \code{dosage} A alleles.
 #'
 #' @author David
@@ -522,8 +522,8 @@ post_prob <- function(dosage, ploidy, mu, sigma2, alpha, rho) {
 #'     The rows index the individuals and the columns index the SNPs.
 #' @param alpha A vector of allele frequencies for all SNPs.
 #' @param rho A vector of inbreeding coefficients for all individuals.
-#' 
-#' @return An array. The rows index the individuals, the columns index the 
+#'
+#' @return An array. The rows index the individuals, the columns index the
 #'     SNPS, and the third dimension indexes the genotypes. Element (i, j, k)
 #'     is the return of \code{\link{post_prob}}.
 #'
@@ -537,8 +537,8 @@ compute_all_post_prob <- function(ploidy, mu, sigma2, alpha, rho) {
 #'
 #' @inheritParams mupdog
 #'
-#' @return A three dimensional array. The rows index the individuals, the 
-#'     columns index the SNPs, and the third dimension indexes the 
+#' @return A three dimensional array. The rows index the individuals, the
+#'     columns index the SNPs, and the third dimension indexes the
 #'     genotypes. This is the log-likelihood for each individual/snp/genotype
 #'     combination.
 #'
@@ -551,7 +551,7 @@ compute_all_log_bb <- function(refmat, sizemat, ploidy, seq, bias, od) {
 #' @param alpha A vector whose jth element is the allele frequency of SNP j.
 #' @param rho A vector whose ith element is the inbreeding coefficient of individual i.
 #' @param ploidy The ploidy of the species.
-#' 
+#'
 #' @return A three dimensional array. The rows index the individuals,
 #'     the columns index the SNPs, and the third dimension indexes the
 #'     genotypes. Computes the "continuous genotype".
@@ -568,7 +568,7 @@ compute_all_phifk <- function(alpha, rho, ploidy) {
 #' @param mu_h The prior mean of the log-bias parameter.
 #' @param sigma2_h The prior variance (not standard deviation)
 #'     of the log-bias parameter. Set to to \code{Inf} to return \code{0}.
-#'     
+#'
 #' @return A double. The default penalty on the allelic bias parameter.
 #'
 #' @author David Gerard
@@ -584,7 +584,7 @@ pen_bias <- function(h, mu_h, sigma2_h) {
 #' @param sigma2_eps The prior variance (not standard deviation)
 #'     of the logit sequencing error rate. Set this to \code{Inf} to
 #'     return \code{0}.
-#'     
+#'
 #' @return A double. The default penalty on the sequencing error rate.
 #'
 #' @author David Gerard
@@ -604,8 +604,8 @@ pen_seq_error <- function(eps, mu_eps, sigma2_eps) {
 #' @param log_bb_dense A matrix of log posterior densities. The
 #'     rows index the SNPs and the columns index the dosage.
 #' @param ploidy The ploidy of the species.
-#' 
-#' @return A double. The objective when updating 
+#'
+#' @return A double. The objective when updating
 #'     \code{rho} in \code{\link{mupdog}}.
 #'
 #'
@@ -645,6 +645,8 @@ obj_for_alpha <- function(mu, sigma2, alpha, rho, log_bb_dense, ploidy) {
 #' @param var_bias The prior variance of the log-bias
 #' @param mean_seq The prior mean of the logit sequencing error rate.
 #' @param var_seq The prior variance of the logit sequencing error rate.
+#' @param mean_od The prior mean of the logit of the overdispersion parameter
+#' @param var_od The prior variance of the logit of the overdispersion parameter.
 #' @param wmat The matrix of (variational) posterior probabilities for each dosage.
 #'     The rows index the individuals and the columns index the dosage levels.
 #' @param update_seq A logical. This is not used in \code{obj_for_eps},
@@ -653,13 +655,13 @@ obj_for_alpha <- function(mu, sigma2, alpha, rho, log_bb_dense, ploidy) {
 #'     but sets the second element to \code{0.0} in \code{\link{grad_for_eps}}.
 #' @param update_od A logical. This is not used in \code{obj_for_eps},
 #'     but sets the third element to \code{0.0} in \code{\link{grad_for_eps}}.
-#'     
+#'
 #' @return A double. The objective when updating \code{eps} in
 #'     \code{\link{mupdog}}.
 #'
 #' @author David Gerard
-obj_for_eps <- function(parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, wmat, update_bias = TRUE, update_seq = TRUE, update_od = TRUE) {
-    .Call('_updog_obj_for_eps', PACKAGE = 'updog', parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, wmat, update_bias, update_seq, update_od)
+obj_for_eps <- function(parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od, wmat, update_bias = TRUE, update_seq = TRUE, update_od = TRUE) {
+    .Call('_updog_obj_for_eps', PACKAGE = 'updog', parvec, refvec, sizevec, ploidy, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od, wmat, update_bias, update_seq, update_od)
 }
 
 #' Objective function when updating mu and sigma2.
@@ -671,7 +673,7 @@ obj_for_eps <- function(parvec, refvec, sizevec, ploidy, mean_bias, var_bias, me
 #' @param cor_inv The inverse of the underlying correlation matrix.
 #' @param log_bb_dense A matrix of log-densities of the beta binomial. The rows index the individuals and the columns index the allele dosage.
 #'     Allele dosage goes from -1 to ploidy, so there are ploidy + 2 elements.
-#' 
+#'
 #' @return A double. The objective when updating \code{mu} and \code{sigma2}
 #'     in \code{\link{mupdog}}.
 #'
@@ -727,7 +729,7 @@ elbo <- function(warray, lbeta_array, cor_inv, postmean, postvar, bias, seq, mea
 #' @param ploidy The ploidy of the species.
 #' @param weight_vec A vector of length \code{ploidy + 1} that contains the weights
 #'     for each component beta-binomial.
-#'     
+#'
 #' @return A double. The objective when updating the beta-binomial genotype
 #'     distribution in \code{\link{mupdog}}.
 #'
@@ -745,8 +747,8 @@ obj_for_weighted_lbb <- function(parvec, ploidy, weight_vec) {
 #' @param ploidy The ploidy of the species.
 #' @param weight_vec A vector of length \code{ploidy + 1} that contains the weights
 #'     for each component beta-binomial.
-#'     
-#' @return A double. The objective when updating the normal 
+#'
+#' @return A double. The objective when updating the normal
 #'     genotype distribution in \code{\link{mupdog}}.
 #'
 #' @author David Gerard
@@ -784,12 +786,7 @@ obj_for_weighted_lnorm <- function(parvec, ploidy, weight_vec) {
 #'
 #' @author David Gerard
 #'
-#' @references Gerard, David, Luis Felipe Ventorim Ferrao,
-#' Antonio Augusto Franco Garcia, and Matthew Stephens. 2018.
-#' Harnessing Empirical Bayes and Mendelian Segregation
-#' for Genotyping Autopolyploids from Messy Sequencing Data."
-#' \emph{bioRxiv}. Cold Spring Harbor Laboratory. doi:10.1101/281550.
-#'
+#' @references Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).
 #' @examples
 #' ## Hardy-Weinberg population with allele-frequency of 0.75.
 #' ## Moderate bias and moderate overdispersion.
@@ -847,12 +844,7 @@ oracle_mis <- function(n, ploidy, seq, bias, od, dist) {
 #'
 #' @export
 #'
-#' @references Gerard, David, Luis Felipe Ventorim Ferrao,
-#' Antonio Augusto Franco Garcia, and Matthew Stephens. 2018.
-#' Harnessing Empirical Bayes and Mendelian Segregation
-#' for Genotyping Autopolyploids from Messy Sequencing Data."
-#' \emph{bioRxiv}. Cold Spring Harbor Laboratory. doi:10.1101/281550.
-#'
+#' @references Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).
 #' @examples
 #' ## Hardy-Weinberg population with allele-frequency of 0.75.
 #' ## Moderate bias and moderate overdispersion.
@@ -898,12 +890,7 @@ oracle_mis_vec <- function(n, ploidy, seq, bias, od, dist) {
 #'     the columns. This is when
 #'     using an oracle estimator.
 #'
-#' @references Gerard, David, Luis Felipe Ventorim Ferrao,
-#' Antonio Augusto Franco Garcia, and Matthew Stephens. 2018.
-#' Harnessing Empirical Bayes and Mendelian Segregation
-#' for Genotyping Autopolyploids from Messy Sequencing Data."
-#' \emph{bioRxiv}. Cold Spring Harbor Laboratory. doi:10.1101/281550.
-#'
+#' @references Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).
 #' @examples
 #' ## Hardy-Weinberg population with allele-frequency of 0.75.
 #' ## Moderate bias and moderate overdispersion.
@@ -948,7 +935,7 @@ oracle_joint <- function(n, ploidy, seq, bias, od, dist) {
 #' @param x The number of reference counts.
 #' @param n The total number of read-counts.
 #' @param logp Return the log density \code{TRUE} or not \code{FALSE}?
-#' 
+#'
 #' @return A double. The outlier density value.
 #'
 #'
@@ -971,7 +958,7 @@ doutdist <- function(x, n, logp) {
 #'     \code{\link{get_wik_mat}} for the equivalent function
 #'     without outliers. \code{\link{doutdist}} for the outlier
 #'     density function.
-#'     
+#'
 #' @return Same as \code{\link{get_wik_mat}} but the last column is
 #'     for the outlier class.
 #'
@@ -985,16 +972,16 @@ get_wik_mat_out <- function(probk_vec, out_prop, refvec, sizevec, ploidy, seq, b
 #' @inheritParams flexdog_full
 #' @param probk_vec The kth element is the prior probability of genotype k (when starting to count from 0).
 #' @param out_prop The probability of being an outlier.
-#' 
-#' @return A double. The \code{\link{flexdog}} objective when 
+#'
+#' @return A double. The \code{\link{flexdog}} objective when
 #'     \code{outliers = TRUE}.
 #'
 #' @author David Gerard
 #'
 #' @seealso \code{\link{flexdog_obj}} for the objective function without outliers.
 #'
-flexdog_obj_out <- function(probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq) {
-    .Call('_updog_flexdog_obj_out', PACKAGE = 'updog', probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq)
+flexdog_obj_out <- function(probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od) {
+    .Call('_updog_flexdog_obj_out', PACKAGE = 'updog', probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias, od, mean_bias, var_bias, mean_seq, var_seq, mean_od, var_od)
 }
 
 dist_from_p <- function(p, ploidy) {
@@ -1258,11 +1245,11 @@ uni_em_const <- function(weight_vec, lmat, pi_init, alpha, lambda, itermax, obj_
 #' @examples
 #' x <- c(1 / 6, 2 / 6, 3 / 6)
 #' y <- c(1 / 9, 2 / 9, 6 / 9)
-#' convolve(x, y)
+#' convolve_up(x, y)
 #' stats::convolve(x, rev(y), type = "o")
 #'
-convolve <- function(x, y) {
-    .Call('_updog_convolve', PACKAGE = 'updog', x, y)
+convolve_up <- function(x, y) {
+    .Call('_updog_convolve_up', PACKAGE = 'updog', x, y)
 }
 
 #' Objective function when doing Brent's method in
@@ -1277,7 +1264,7 @@ convolve <- function(x, y) {
 #' @param alpha The mixing weight on the uniform component.
 #'
 #' @return The objective value, as calculated by taking a
-#'     convolution using \code{\link{convolve}} of the mixing
+#'     convolution using \code{\link{convolve_up}} of the mixing
 #'     distribution and \code{pvec}, then putting that
 #'     probability distribution through \code{\link{f1_obj}}.
 #'

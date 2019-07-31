@@ -87,7 +87,7 @@
 #' \itemize{
 #' \item{David J Balding and Richard A Nichols. \href{http://dx.doi.org/10.1038/sj.hdy.6881750}{Significant genetic correlations among caucasians at forensic DNA loci}. Heredity, 78(6):583–589, 1997. doi: 10.1038/sj.hdy.6881750.}
 #' \item{Paul D Blischak, Laura S Kubatko, and Andrea D Wolfe. \href{http://dx.doi.org/10.1093/bioinformatics/btx587}{SNP genotyping and parameter estimation in polyploids using low-coverage sequencing data}. Bioinformatics, page btx587, 2017. doi: 10.1093/bioinformatics/btx587.}
-#' \item{David Gerard, Luis Felipe Ventorim Ferrao, and Matthew Stephens. Harnessing Empirical Bayes and Mendelian Segregation for Genotyping Autopolyploids with Messy Sequencing Data. 2018.}
+#' \item{Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).}
 #' }
 #'
 #' @export
@@ -453,21 +453,23 @@ mupdog <- function(refmat,
     fout_seq <- foreach::foreach(index = seq_len(nsnps), .combine = cbind,
                                  .export = c("obj_for_eps",
                                              "grad_for_eps")) %dopar% {
-      oout <- stats::optim(par = c(seq[index], bias[index], od[index]),
-                           fn = obj_for_eps,
-                           gr = grad_for_eps,
-                           method = "L-BFGS-B",
-                           lower = rep(10^-6, 3),
-                           upper = c(1 - 10^-6, Inf, 1 - 10^-6),
-                           control = list(fnscale = -1, maxit = 10),
-                           refvec = refmat[, index],
-                           sizevec = sizemat[, index],
-                           ploidy = ploidy,
+      oout <- stats::optim(par       = c(seq[index], bias[index], od[index]),
+                           fn        = obj_for_eps,
+                           gr        = grad_for_eps,
+                           method    = "L-BFGS-B",
+                           lower     = rep(10^-6, 3),
+                           upper     = c(1 - 10^-6, Inf, 1 - 10^-6),
+                           control   = list(fnscale = -1, maxit = 10),
+                           refvec    = refmat[, index],
+                           sizevec   = sizemat[, index],
+                           ploidy    = ploidy,
                            mean_bias = mean_bias,
-                           var_bias = var_bias,
-                           mean_seq = mean_seq,
-                           var_seq = var_seq,
-                           wmat = warray[, index, ])
+                           var_bias  = var_bias,
+                           mean_seq  = mean_seq,
+                           var_seq   = var_seq,
+                           mean_od   = 0,
+                           var_od    = Inf,
+                           wmat      = warray[, index, ])
       oout$par
       }
     seq  <- fout_seq[1, ]
@@ -482,10 +484,18 @@ mupdog <- function(refmat,
                                       od = od)
 
     ## Calculate objective ---------------------------------------------------------------------------------------------------------
-    obj <- elbo(warray = warray, lbeta_array = lbeta_array, cor_inv = cor_inv,
-                postmean = postmean, postvar = postvar, bias = bias,
-                seq = seq, mean_bias = mean_bias, var_bias = var_bias,
-                mean_seq = mean_seq, var_seq = var_seq, ploidy = ploidy)
+    obj <- elbo(warray      = warray,
+                lbeta_array = lbeta_array,
+                cor_inv     = cor_inv,
+                postmean    = postmean,
+                postvar     = postvar,
+                bias        = bias,
+                seq         = seq,
+                mean_bias   = mean_bias,
+                var_bias    = var_bias,
+                mean_seq    = mean_seq,
+                var_seq     = var_seq,
+                ploidy      = ploidy)
 
     ## stopping criteria -----------------------------------------------------------------------------------------------------------
     err <- abs(obj_old / obj) - 1

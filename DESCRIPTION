@@ -1,7 +1,6 @@
 Package: updog
 Title: Flexible Genotyping for Polyploids
-Version: 1.0.1
-Date: 2018-06-11
+Version: 1.1.0
 Authors@R: person("David", "Gerard", email = "gerard.1787@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9450-5023"))
 Description: Implements empirical Bayes approaches to genotype
        polyploids from next generation sequencing data while
@@ -15,14 +14,14 @@ Description: Implements empirical Bayes approaches to genotype
        correlation with the true genotypes, oracle_cor(). These latter two
        functions are useful for read depth calculations. Run
        browseVignettes(package = "updog") in R for example usage. See also
-       Gerard et al. (2018) <doi:10.1101/281550> for details on the
+       Gerard et al. (2018) <doi:10.1534/genetics.118.301468> for details on the
        implemented methods.
 Depends: R (>= 3.4.0)
 License: GPL-3
 BugReports: http://github.com/dcgerard/updog/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 LinkingTo: Rcpp, RcppArmadillo
 Imports: Rcpp (>= 0.12.16), RcppArmadillo, assertthat, foreach,
         doParallel, ggplot2, ggthemes, stringr
@@ -30,8 +29,8 @@ Suggests: covr, testthat, SuppDists, Rmpfr, CVXR, knitr, rmarkdown,
         tidyverse
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2018-07-27 16:38:38 UTC; david
+Packaged: 2019-07-31 16:32:41 UTC; dgerard
 Author: David Gerard [aut, cre] (<https://orcid.org/0000-0001-9450-5023>)
 Maintainer: David Gerard <gerard.1787@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-07-27 17:50:06 UTC
+Date/Publication: 2019-07-31 18:30:02 UTC

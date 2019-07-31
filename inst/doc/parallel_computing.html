@@ -7,22 +7,23 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2018-07-27" />
+<meta name="date" content="2019-07-31" />
 
 <title>Parallelized Genotyping using Updog</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -35,13 +36,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
   { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -83,7 +82,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -271,6 +292,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -279,8 +303,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">Parallelized Genotyping using Updog</h1>
-<h4 class="author"><em>David Gerard</em></h4>
-<h4 class="date"><em>2018-07-27</em></h4>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2019-07-31</h4>
 
 
 
@@ -301,15 +325,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-2" data-line-number="2">ngenes &lt;-<span class="st"> </span><span class="kw">ncol</span>(uitdewilligen<span class="op">$</span>refmat)</a></code></pre></div>
 <p>You can read more about these data by typing <code>?uitdewilligen</code> in R.</p>
 <p>Suppose we wanted to use parallel computing to genotype this individual. Also suppose we only wanted the MAP (maximum a posteriori) estimated genotypes for each individual and each gene. Then we can use the following code.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">nc &lt;-<span class="st"> </span><span class="dv">2</span> ## number of cores. </a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">        ## You should change this for your specific computing environment.</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">nc &lt;-<span class="st"> </span><span class="dv">2</span> <span class="co">## number of cores. </span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">        <span class="co">## You should change this for your specific computing environment.</span></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3">cl &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw">makeCluster</span>(nc)</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4">doParallel<span class="op">::</span><span class="kw">registerDoParallel</span>(<span class="dt">cl =</span> cl)</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">stopifnot</span>(foreach<span class="op">::</span><span class="kw">getDoParWorkers</span>() <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>) ## make sure cluster is set up.</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">stopifnot</span>(foreach<span class="op">::</span><span class="kw">getDoParWorkers</span>() <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>) <span class="co">## make sure cluster is set up.</span></a>
 <a class="sourceLine" id="cb4-6" data-line-number="6">gene_est &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>ngenes, </a>
 <a class="sourceLine" id="cb4-7" data-line-number="7">                    <span class="dt">.combine =</span> cbind, </a>
 <a class="sourceLine" id="cb4-8" data-line-number="8">                    <span class="dt">.export =</span> <span class="st">&quot;flexdog&quot;</span>) <span class="op">%dopar%</span><span class="st"> </span>{</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">                      ## fit flexdog</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">                      <span class="co">## fit flexdog</span></a>
 <a class="sourceLine" id="cb4-10" data-line-number="10">                      fout &lt;-<span class="st"> </span><span class="kw">flexdog</span>(<span class="dt">refvec  =</span> uitdewilligen<span class="op">$</span>refmat[, i], </a>
 <a class="sourceLine" id="cb4-11" data-line-number="11">                                      <span class="dt">sizevec =</span> uitdewilligen<span class="op">$</span>sizemat[, i], </a>
 <a class="sourceLine" id="cb4-12" data-line-number="12">                                      <span class="dt">ploidy  =</span> uitdewilligen<span class="op">$</span>ploidy, </a>
@@ -320,14 +344,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="kw">stopCluster</span>(cl)</a></code></pre></div>
 <p>Note that I used <code>model = &quot;norm&quot;</code> because we have a very small number of samples.</p>
 <p>However, this doesn’t return any sort of diagnostic statistics for each SNP. So suppose we now want to save all of the output of each SNP and not just the MAP genotype, then we can use the following code:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">nc &lt;-<span class="st"> </span><span class="dv">2</span> ## number of cores. </a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">        ## You should change this for your specific computing environment.</a>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">nc &lt;-<span class="st"> </span><span class="dv">2</span> <span class="co">## number of cores. </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">        <span class="co">## You should change this for your specific computing environment.</span></a>
 <a class="sourceLine" id="cb5-3" data-line-number="3">cl &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw">makeCluster</span>(nc)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">doParallel<span class="op">::</span><span class="kw">registerDoParallel</span>(<span class="dt">cl =</span> cl)</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">stopifnot</span>(foreach<span class="op">::</span><span class="kw">getDoParWorkers</span>() <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>) ## make sure cluster is set up.</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">stopifnot</span>(foreach<span class="op">::</span><span class="kw">getDoParWorkers</span>() <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>) <span class="co">## make sure cluster is set up.</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6">glist &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>ngenes, </a>
 <a class="sourceLine" id="cb5-7" data-line-number="7">                 <span class="dt">.export =</span> <span class="st">&quot;flexdog&quot;</span>) <span class="op">%dopar%</span><span class="st"> </span>{</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">                   ## fit flexdog</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">                   <span class="co">## fit flexdog</span></a>
 <a class="sourceLine" id="cb5-9" data-line-number="9">                   fout &lt;-<span class="st"> </span><span class="kw">flexdog</span>(<span class="dt">refvec  =</span> uitdewilligen<span class="op">$</span>refmat[, i], </a>
 <a class="sourceLine" id="cb5-10" data-line-number="10">                                   <span class="dt">sizevec =</span> uitdewilligen<span class="op">$</span>sizemat[, i], </a>
 <a class="sourceLine" id="cb5-11" data-line-number="11">                                   <span class="dt">ploidy  =</span> uitdewilligen<span class="op">$</span>ploidy, </a>
@@ -343,20 +367,23 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb6-4" data-line-number="4">      <span class="dt">xlab =</span> <span class="st">&quot;Posterior Proportion Mis-genotyped&quot;</span>, </a>
 <a class="sourceLine" id="cb6-5" data-line-number="5">      <span class="dt">bins =</span> <span class="dv">30</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbAAAAFQCAMAAADp1NuaAAACylBMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYoKCgpKSkqKiosLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJERERFRUVHR0dISEhJSUlLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19hYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx+fn5/f3+AgICBgYGCgoKDg4OFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKUlJSVlZWWlpaXl5eYmJiZmZmcnJydnZ2enp6fn5+goKChoaGkpKSlpaWmpqanp6eoqKirq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8C+eyGAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAPI0lEQVR4nO2d/WMUxR3GNxKKWHwFjZVSUYrVWi1aqxRNi7aNUqkVCUVEBLGKCihqsYqlYFvKOzGxL5b6bm3l/SWSYLCtBgU0iggK5C73khfyevM/dPf29m5u73Zu9juX3G54Pj8kdzPfZ2bcD5nc4TKnMeArtEIvALgDwnwGhPkMCPMZEOYzIMxnuBS29ZFszH94ftZ2SeaqhOc9rJKeP08lPVdt5a4u2vM0YVV7srV2Nna7GyaNWEQhzFqDKumOEyrpUFQl3eLmonU/mHgAYQpAGAEIEwJhPBBGAMKEQBgPhBGAMCEQxgNhBCBMCITxQBgBCBMCYTy+FHZHCndDJYEwCSDMBMIIQJgEEGYCYQQgTAKqsIrqFhucMHuXJM1BYjBOOKCSjkRU0sEmlXSo2UVx5AGasMrdXTY4YfYuSTrDxGCc5qBKuq1VJd0UUUlHO1wUt8+hCcOWyOODLRHCeCCMAIQJgTAeCCMAYUIgjAfCCECYEAjjgTACECYEwnggjACECYEwHggjAGFCIIwHwghAmBAI44EwAhAmBMJ4IIwAhAmBMB4IIwBhQiCMB8IIQBjPOzP1L/+ZPXWVNTaE8XhO2LFp9zDWNvlAx8JXEi0QxuM1YV3zN+jCdjzJ2LvzE00QxuM1Yatf/0wX9tJqxo7cpT8NTJky5YFtIRucMHuXLAFq0CDYqJJuCqqkG9VW3uSiOHB/bmHbl7C4sDWMHZ6mP48sWrTo8Z3NNjhh9i5ZgtSgQSigko6EVdKBJpV0KOqiOCzxjyEW314+6eby8PanGPvvvEQbtkQer22JLP4T1jrlcGzxy4kGCOPxpjC2576ZK/GyPhveE5YBhPFAGAEIEwJhPBBGAMKEQBgPhBGAMCEQxgNhBCBMCITxQBgBCBMCYTwQRgDChEAYD4QRgDAhEMYDYQQgTAiE8UAYAQgTAmE8EEYAwoRAGA+EEYAwIRDG4wNhz9W02+CE2bskOREiBuNEAyrplmaVdFBp5ZE2F8WtxHPrIYzHB8KwJfL4YEuEMB4IIwBhQiCMB8IIQJgQCOOBMAIQJgTCeCCMAIQJgTAeCCMAYUIgjAfCCECYEAjjgTACECYEwnggjACECYEwHggjAGFCIIwHwghAmBAI44EwAhAmBMJ4vCbshTvLn4nigwac8Ziw96Y1tj9TgQ8acMZjwg69x3oqK1MfNBB6RGdH1AYnzN4lS5AaNAgFVNLhkEo6oLTypoiL4pDEufWMbZow6wQ+aMAZj33QgE7TimWpDxowwJbI47EtceNWxhpmMHzQgCMeE7Z9dmuscgk+aMAZjwmLVUy9c3EYHzTgjMeEZQPCeCCMAIQJgTAeCCMAYUIgjAfCCECYEAjjgTACECYEwnggjACECYEwHggjAGFCIIwHwghAmBAI4/GEsL1XiHIQxuMJYXXCnzkI44EwAhAGYdJAGIGTVdijFndCmDSFFHZZClEOwng8sSWKqdzdZYMTZu+SpDNMDMZpDqqk21pV0k0RlXS0w0Vx+xwnYeL3YRXVLTY4YfYuSZqDxGCccEAlHYmopINNKulQs4viiOO59XjRIY8ntkQIkwfCCEAYhEmD92EETlZheB9GwBNbohgI44EwAiersGdNlm/rEeYgjKeQwkpMztbGt4hyEMbjhS3x3Qt+I8pBGI8XhLGVeJUojSeEbTtNlIMwHk8IW/8NUQ7CeLwgrKP0F6IchPEUUtjdJr8cdcaHohyE8RRS2FiTH97fIMxBGI8XtsQcQBgPhBE4WYUtTiHKQRhPIYVdkeASDf8/TBoPbImbRw+rEuUgjKfgwo5PLborIMxBGE+BhcXWnXPp9hw5COMprLD6sYMXdaYVbZxRvvAozq13ppDC2hYMvNH2nvnIxC86Kh7DufXOFFLYSK109RoTq2bPKsY+n5o6t76lqqrq6bfbbHDC7F2StIaIwTiRgEq6OaqSDiqtPNziorjZfqv28BSc166la1Pn1h8rLS2duSVggxNm75KlkRosdLpRLe2m+NivbMKyUj2rqgfn1jtT8Jf16cSWLziif8O59Y54TFjtQ109PT04t94ZjwmrLNMpx7n1znhMWDYgjMfvwu6gyYMwCSDMBMIgTBoIIwBhECYNhBGAMAiTBsIIQBiESQNhBCAMwqSBMAIQBmHSQBgBCIMwaSCMAIRBmDQQRgDCIEwaCCMAYRAmTd+cW18Xs+EgzF4moCfiojiD1qBKur1NJR2KqqRbulwUdxGFVeyI2nAQZi8TEAm6KM4gFFBJh0Mq6YDSypsiLopD99OEYUvk8cGWCGE8EEYAwoRAGA+EEYAwIRDGA2EEIEwIhPFAGAEIEwJhPBBGAMKEQBgPhBGAMCEQxgNhBCBMCITxQBgBCBMCYTwQRgDChEAYD4QRgDAhEMYDYQQgTAiE8XhOWPeMVubi3HoIc0X+hb05r0wXJn9uPYS5Iv/C3quZoAtLnlt/YsOGDUtr2m04CLOXCTgRclGcQTSgkm5pVkkHlVYeaXNR3Go/tz47E3VhyXPrvxwzZsz0zY02HITZy4AaR6XOrTeFWefWdx8+fHjNO902HITZywR0hV0UZ9ASVEmfaFVJN0VU0tEOF8Udc6SFyZ9bj99hruiNl/WGMPlz6yHMFb0lTP7ceghzBd44E4AwCJMGwghAGIRJA2EEIAzCpIEwAhAGYdJAGAEIgzBpIIwAhEGYNN4S5sIdhEkAYSYQBmHSQBgBCIMwaSCMAIRBmDQQRgDCIEwaCCMAYRAmTZ8Ikz63niPXkew4t16CXj+3Hj9hOcGWSADCIEwaCCMAYRAmjS+EZWuGMAkgzATCIEwaCCMAYRAmDYQRgDB5YQ4V7lAdBMIgTBoIIwBhECYNhBGAMGUchnZYT+5BHKoTLe6F8dNAGIQ5AWEmEAZh0kAYhGUCYRAmh8N6cleLK+LCcs/oMEi+hQn+gyHMpF8KI51bn28c1pa7WlzRH4XRzq3PNw6Ly10truiPwpLn1rs6VTvfOBw2nbtaXBE/VTv3jA6D5PtUbcF/sOSp2ga0c+vzjcNx7rmrJcajVuT9cH7B2JLn1seFWefWd9TW1v6xtjMLbY3t2Zol6QgrhDubgyrpthaVdJPSyqNuLtoJ+Z+wHOfWG3Q2unlLYQe3CEjg4ndYjnPrDSCMQq+9cRafW28AYRQK9DcdBhBGAcIIQBgBCJMAwkwgjACESQBhJhBGAMIkIAv7c20Wqt/ala1ZkpotCuHa7RtV0tU7VNKblFa+zc1Fe5so7P2qbCybvjJruyQVKuGFs1XSzz2nkp6zQCVdUemmehNNWHZ2j2nIxzAkVt5YsKnZtCf6fk4IUwDCCEAYgfbDnfkYhkTki4JNzY4rvUKlkRdhoO+AMJ8BYT5DQVjqfsXEI/4Gxl4mY+6NM8oXHi3Q3Iy9M7NvpmYqwlL3KyYepd3A2LtkzH1k4hcdFY8VZm7Gjk27p0+mNqALS96vaD1KNfQ6GXPvWcXY51MLMzfrmr/BD8KS9ytaj1INvU7G3DpdS9cWaO7Vr3/mC2HW/YrWo1RDr5MxN2PVs6p6CjP39iXMF8JS9ysmHqXdwNi7ZMwdW77gSJ/MnGXuxbeXT7q5PNxH09OFWfcr7m9LPEq7gbF3yZi79qGunp6++QnLmFvHFz9h1v2KEz6wHvE3MPYy9rkry3TKCzM384swUAggzGdAmM+AMJ8BYT4DwnwGhPmMQgr7uaZpRSPuI96NqZZOUqIdML7FLtD2KY6UwZCN+R6RFVjYuJqaHcuGTM/oGPts+vOD2hoX6SzoA2YdQ6ekaJHxbdcp2j6nEsGoQvqfsAnG1yfOyuhIvxIdn4QerUl7npFONGVH79QHTB8jRcnYK41vc3+g7XMqceIkFfbsoB52fPJ555cfZ+y1KwdfuIxdpWk3sfDMEWeUfcRY8WvDfsqKdyZL4s/T0/GmRH/dsJ3fH1r6AUurjw/Ij7HrtpEX/91cRMmSgfosbOQyfUvUS8wVmHxedtaVrwypTy0lEUsMY4z64A163dPfSs5qle4ff+YVr/ZLYd27vzGexa6+ZsvWa66KHfrK/N2LtV3xP7o3XL+1dtL5IVY8uuJT/UpaJebztHS8yeqvG3TtwbZHh0XT640B+TGub+j+9anmv4MoWXfTbxl7d8iHcWHWCgy6RpftWl9SVJ9aihlLDqOPWj2gkbHLFlmzWqUtJeO3vXjhKf1OmGbwnQa2pfgQY58N2Lah6CBj6xuMK1EzsEn3MfxVVryUGRfbKjGfp6XjTVZ/nfYvxnouWpFebwpLta1k7JD2cXyYknXrxjD2+KSDcWHWCgzWn9XMWKVWn1qKGUsOo48a+1oFqy/61JrVKl17tv5a6E2t3wnTXzbUfBxjbNUo4+lFa5q/N2TK823x61upFetof2DFbzHjYlsl5vO0dLzJ6q/TjJs7b5udXm8KS7VtZiyQFBYobmCXrDeFJVawXv+jsO9JY7v7SKtPLcWMJYcxRr3vJ+yJ65g1q1U6x7gdub2o3wmbkHiw4pvG11ErGNtx78XD/mlciRfPSfTpv1eML8mS+PO0dLzJ6q/T9D2KTZiVXm8KS2tLCWPjf7d3cKspLLGCznA43PN4qd7doNWnLUWPJYcxRt06KDpqFbNmtUofNoR19L8t0brkG4sP67/iizdv1bevWNnPjCuxX3ufscZb9lrCrBInYVZ/nfYPxtrO/VN6vSksrY0TtvbqpyYyU5i1AoO/ntPK2F+0+rSl6LHkMMaoPefOHRhg1qxW6bqh+m66qf9tidYlj333uuqd146JvXXK8v+9fNGTbNy9IXbr5Zu33zS6yxJmlTgJs/rrtBGv7CobGkmvNwa0jcEJOz5g+N8SwqwVGLRfeGvdG5cWf5C2FD2WHMYYlc0cUMaYNatV2nr+j99+Y/RX+60wdmzSeedN1l9vLxk56OtzO1nF0FtZ673Dz7zlk+SWmCxxEGb112lvXH76DXtZer0xoG2MwGDzvZsujJUOiiaEWSuI0/CjM67dUxxIW4oRs4YxRmUbtBdYalar9MD4M7/90uTdvXDR+tvfJdZpebtJ4eiL+pf3T4uJq149vS2vs+YCwhz58tTfH90/TnwTdndk3N35nTUXEObMv8cMvmC6+Pa1Gm1EY55nzUF/E9bH9BzoM1MJIMxnQJjPgDCfAWE+A8J8BoT5DAjzGf8Hq4hxIkOQaokAAAAASUVORK5CYII=" /><!-- --></p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-gerard2018harnessing">
-<p>Gerard, David, Luis Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Harnessing Empirical Bayes and Mendelian Segregation for Genotyping Autopolyploids from Messy Sequencing Data.” <em>bioRxiv</em>. Cold Spring Harbor Laboratory. <a href="https://doi.org/10.1101/281550" class="uri">https://doi.org/10.1101/281550</a>.</p>
+<div id="ref-gerard2018genotyping">
+<p>Gerard, David, Luis Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Genotyping Polyploids from Messy Sequencing Data.” <em>Genetics</em> 210 (3). Genetics: 789–807. <a href="https://doi.org/10.1534/genetics.118.301468">https://doi.org/10.1534/genetics.118.301468</a>.</p>
 </div>
 <div id="ref-uitdewilligen2013next">
-<p>Uitdewilligen, Anne-Marie A. AND D’hoop, Jan G. A. M. L. AND Wolters. 2013. “A Next-Generation Sequencing Method for Genotyping-by-Sequencing of Highly Heterozygous Autotetraploid Potato.” <em>PLOS ONE</em> 8 (5). Public Library of Science:1–14. <a href="https://doi.org/10.1371/journal.pone.0062355" class="uri">https://doi.org/10.1371/journal.pone.0062355</a>.</p>
+<p>Uitdewilligen, Anne-Marie A. AND D’hoop, Jan G. A. M. L. AND Wolters. 2013. “A Next-Generation Sequencing Method for Genotyping-by-Sequencing of Highly Heterozygous Autotetraploid Potato.” <em>PLOS ONE</em> 8 (5). Public Library of Science: 1–14. <a href="https://doi.org/10.1371/journal.pone.0062355">https://doi.org/10.1371/journal.pone.0062355</a>.</p>
 </div>
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
