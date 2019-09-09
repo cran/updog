@@ -14,7 +14,8 @@
 #' correlation with the true genotypes (\code{\link{oracle_cor}}).
 #' These latter two functions are useful for read depth calculations.
 #' Run \code{browseVignettes(package = "updog")} in R
-#' for example usage.
+#' for example usage. The methods are described in detail in
+#' Gerard et. al. (2018) and Gerard and Ferrão (2019).
 #'
 #' The package is named \code{updog} for "Using
 #' Parental Data for Offspring Genotyping" because
@@ -31,7 +32,12 @@
 #' If you find a bug or want an enhancement, please submit an
 #' issue at \url{http://github.com/dcgerard/updog/issues}.
 #'
-#' @references Gerard, D., Ferrao, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. *Genetics*, 210(3), 789-807. doi: [10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468).
+#' @references
+#' \itemize{
+#'   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
+#'   \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{bioRxiv}. doi: \href{https://doi.org/10.1101/751784}{10.1101/751784}.}
+#' }
+#'
 #' @section \code{updog} Functions:
 #' \describe{
 #'   \item{\code{\link{flexdog}}}{The main function that
@@ -77,6 +83,7 @@
 #'
 #' @docType package
 #' @name updog
+#' @name updog-package
 #'
 #' @author David Gerard
 NULL

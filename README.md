@@ -20,8 +20,11 @@ sequencing error, and (possibly) outlying observations. It is named
 updog for “Using Parental Data for Offspring Genotyping” because we
 originally developed the method for full-sib populations, but it works
 now for more general populations. The method is described in detail
-[here](https://doi.org/10.1534/genetics.118.301468) and
-[here](https://doi.org/10.1101/281550).
+Gerard et. al. (2018)
+\<[doi:10.1534/genetics.118.301468](https://doi.org/10.1534/genetics.118.301468)\>.
+Additional details concerning prior specification are described in
+Gerard and Ferrão (2019)
+\<[doi:10.1101/751784](https://doi.org/10.1101/751784)\>.
 
 The main function is `flexdog()`, which provides many options for the
 distribution of the genotypes in your sample. Novel genotype
@@ -63,7 +66,8 @@ and [polyRAD](https://cran.r-project.org/package=polyRAD). Our best
 [polyRAD](https://cran.r-project.org/package=polyRAD) has some nice
 ideas for utilizing population structure and linkage disequilibrium.
 
-See [NEWS](./inst/NEWS.md) for the latest updates on the package.
+See [NEWS](https://github.com/dcgerard/updog/blob/master/NEWS.md) for
+the latest updates on the package.
 
 ## Vignettes
 
@@ -122,7 +126,7 @@ Or, using BibTex:
 
 ``` tex
 @article {gerard2018genotyping,
-    author = {Gerard, David and Ferr{\~a}o, Luis Felipe Ventorim and Garcia, Antonio Augusto Franco and Stephens, Matthew},
+    author = {Gerard, David and Ferr{\~a}o, Lu{\'i}s Felipe Ventorim and Garcia, Antonio Augusto Franco and Stephens, Matthew},
     title = {Genotyping Polyploids from Messy Sequencing Data},
     volume = {210},
     number = {3},
@@ -133,6 +137,26 @@ Or, using BibTex:
     issn = {0016-6731},
     URL = {https://doi.org/10.1534/genetics.118.301468},
     journal = {Genetics}
+}
+```
+
+If you are using the proportional normal prior class (`model = "norm"`)
+or the unimodal prior class (`model = "ash"`), then please also cite
+
+> Gerard D. & Ferrão L. F. V. (2019). “Priors for Genotyping
+> Polyploids.” *bioRxiv*. doi:
+> [10.1101/751784](https://doi.org/10.1101/751784).
+
+Or, using BibTex:
+
+``` tex
+@article{gerard2019priors,
+  title = {Priors for Genotyping Polyploids},
+  year = {2019},
+  journal = {bioRxiv},
+  publisher = {Cold Spring Harbor Laboratory},
+  doi = {10.1101/751784},
+  author = {David Gerard and Lu{\'i}s Felipe Ventorim Ferr{\~a}o},
 }
 ```
 
