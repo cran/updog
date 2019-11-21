@@ -1,4 +1,4 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,19 +6,19 @@ knitr::opts_chunk$set(
   fig.height=3.5
 )
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 library(parallel)
 library(foreach)
 library(doParallel)
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 library(updog)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data("uitdewilligen")
 ngenes <- ncol(uitdewilligen$refmat)
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 nc <- 2 ## number of cores. 
         ## You should change this for your specific computing environment.
 cl <- parallel::makeCluster(nc)
@@ -37,7 +37,7 @@ gene_est <- foreach(i = 1:ngenes,
                       }
 stopCluster(cl)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 nc <- 2 ## number of cores. 
         ## You should change this for your specific computing environment.
 cl <- parallel::makeCluster(nc)
@@ -55,8 +55,8 @@ glist <- foreach(i = 1:ngenes,
                    }
 stopCluster(cl)
 
-## ---- message=FALSE------------------------------------------------------
-library(tidyverse)
+## ---- message=FALSE-----------------------------------------------------------
+library(ggplot2)
 prop_mis <- sapply(X = glist, FUN = function(x) x$prop_mis)
 qplot(prop_mis, 
       xlab = "Posterior Proportion Mis-genotyped", 

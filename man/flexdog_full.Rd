@@ -4,15 +4,39 @@
 \alias{flexdog_full}
 \title{Flexible genotyping for polyploids from next-generation sequencing data.}
 \usage{
-flexdog_full(refvec, sizevec, ploidy, model = c("norm", "hw", "bb",
-  "ash", "s1", "s1pp", "f1", "f1pp", "flex", "uniform", "custom"),
-  verbose = TRUE, mean_bias = 0, var_bias = 0.7^2, mean_seq = -4.7,
-  var_seq = 1, mean_od = -5.5, var_od = 0.5^2, seq = 0.005,
-  bias = 1, od = 0.001, update_bias = TRUE, update_seq = TRUE,
-  update_od = TRUE, mode = NULL, use_cvxr = FALSE, itermax = 200,
-  tol = 10^-4, fs1_alpha = 10^-3, ashpen = 10^-6, p1ref = NULL,
-  p1size = NULL, p2ref = NULL, p2size = NULL, snpname = NULL,
-  outliers = FALSE, prior_vec = NULL)
+flexdog_full(
+  refvec,
+  sizevec,
+  ploidy,
+  model = c("norm", "hw", "bb", "ash", "s1", "s1pp", "f1", "f1pp", "flex", "uniform",
+    "custom"),
+  verbose = TRUE,
+  mean_bias = 0,
+  var_bias = 0.7^2,
+  mean_seq = -4.7,
+  var_seq = 1,
+  mean_od = -5.5,
+  var_od = 0.5^2,
+  seq = 0.005,
+  bias = 1,
+  od = 0.001,
+  update_bias = TRUE,
+  update_seq = TRUE,
+  update_od = TRUE,
+  mode = NULL,
+  use_cvxr = FALSE,
+  itermax = 200,
+  tol = 10^-4,
+  fs1_alpha = 10^-3,
+  ashpen = 10^-6,
+  p1ref = NULL,
+  p1size = NULL,
+  p2ref = NULL,
+  p2size = NULL,
+  snpname = NULL,
+  outliers = FALSE,
+  prior_vec = NULL
+)
 }
 \arguments{
 \item{refvec}{A vector of counts of reads of the reference allele.}
@@ -328,7 +352,7 @@ plot(fout)
 \references{
 \itemize{
   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{bioRxiv}. doi: \href{https://doi.org/10.1101/751784}{10.1101/751784}.}
+  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{Bioinformatics}. doi: \href{https://doi.org/10.1093/bioinformatics/btz852}{10.1093/bioinformatics/btz852}.}
 }
 }
 \seealso{

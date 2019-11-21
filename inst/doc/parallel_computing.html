@@ -13,7 +13,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2019-09-09" />
+<meta name="date" content="2019-11-20" />
 
 <title>Parallelized Genotyping using Updog</title>
 
@@ -304,7 +304,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Parallelized Genotyping using Updog</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2019-09-09</h4>
+<h4 class="date">2019-11-20</h4>
 
 
 
@@ -361,7 +361,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb5-15" data-line-number="15">                   }</a>
 <a class="sourceLine" id="cb5-16" data-line-number="16"><span class="kw">stopCluster</span>(cl)</a></code></pre></div>
 <p>Returning the diagnostics for each SNP is pretty easy. For example, below we extract the variable <code>prop_mis</code> from the list <code>glist</code> and make a histogram of these values.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">library</span>(ggplot2)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">prop_mis &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="dt">X =</span> glist, <span class="dt">FUN =</span> <span class="cf">function</span>(x) x<span class="op">$</span>prop_mis)</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">qplot</span>(prop_mis, </a>
 <a class="sourceLine" id="cb6-4" data-line-number="4">      <span class="dt">xlab =</span> <span class="st">&quot;Posterior Proportion Mis-genotyped&quot;</span>, </a>
@@ -372,11 +372,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-gerard2018genotyping">
-<p>Gerard, David, Luis Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Genotyping Polyploids from Messy Sequencing Data.” <em>Genetics</em> 210 (3). Genetics: 789–807. <a href="https://doi.org/10.1534/genetics.118.301468">https://doi.org/10.1534/genetics.118.301468</a>.</p>
-</div>
 <div id="ref-gerard2019priors">
-<p>Gerard, David, and Luís Felipe Ventorim Ferrão. 2019. “Priors for Genotyping Polyploids.” <em>bioRxiv</em>. Cold Spring Harbor Laboratory. <a href="https://doi.org/10.1101/751784">https://doi.org/10.1101/751784</a>.</p>
+<p>Gerard, David, and Luís Felipe Ventorim Ferrão. 2019. “Priors for Genotyping Polyploids.” <em>Bioinformatics</em>, November. <a href="https://doi.org/10.1093/bioinformatics/btz852">https://doi.org/10.1093/bioinformatics/btz852</a>.</p>
+</div>
+<div id="ref-gerard2018genotyping">
+<p>Gerard, David, Luís Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Genotyping Polyploids from Messy Sequencing Data.” <em>Genetics</em> 210 (3). Genetics: 789–807. <a href="https://doi.org/10.1534/genetics.118.301468">https://doi.org/10.1534/genetics.118.301468</a>.</p>
 </div>
 <div id="ref-uitdewilligen2013next">
 <p>Uitdewilligen, Anne-Marie A. AND D’hoop, Jan G. A. M. L. AND Wolters. 2013. “A Next-Generation Sequencing Method for Genotyping-by-Sequencing of Highly Heterozygous Autotetraploid Potato.” <em>PLOS ONE</em> 8 (5). Public Library of Science: 1–14. <a href="https://doi.org/10.1371/journal.pone.0062355">https://doi.org/10.1371/journal.pone.0062355</a>.</p>

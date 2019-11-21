@@ -4,10 +4,22 @@
 \alias{plot_geno}
 \title{Make a genotype plot.}
 \usage{
-plot_geno(refvec, sizevec, ploidy, p1ref = NULL, p1size = NULL,
-  p2ref = NULL, p2size = NULL, geno = NULL, seq = 0, bias = 1,
-  maxpostprob = NULL, p1geno = NULL, p2geno = NULL,
-  use_colorblind = TRUE)
+plot_geno(
+  refvec,
+  sizevec,
+  ploidy,
+  p1ref = NULL,
+  p1size = NULL,
+  p2ref = NULL,
+  p2size = NULL,
+  geno = NULL,
+  seq = 0,
+  bias = 1,
+  maxpostprob = NULL,
+  p1geno = NULL,
+  p2geno = NULL,
+  use_colorblind = TRUE
+)
 }
 \arguments{
 \item{refvec}{A vector of non-negative integers. The number of
@@ -76,7 +88,7 @@ plot_geno(refvec = refvec, sizevec = sizevec, ploidy = ploidy)
 \references{
 \itemize{
   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{bioRxiv}. doi: \href{https://doi.org/10.1101/751784}{10.1101/751784}.}
+  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{Bioinformatics}. doi: \href{https://doi.org/10.1093/bioinformatics/btz852}{10.1093/bioinformatics/btz852}.}
 }
 }
 \author{

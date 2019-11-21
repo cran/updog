@@ -13,7 +13,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2019-09-09" />
+<meta name="date" content="2019-11-20" />
 
 <title>Example Use of Updog</title>
 
@@ -304,7 +304,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Example Use of Updog</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2019-09-09</h4>
+<h4 class="date">2019-11-20</h4>
 
 
 
@@ -324,22 +324,18 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(updog)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">data</span>(<span class="st">&quot;snpdat&quot;</span>)</a></code></pre></div>
-<p>We’ll use the <code>tidyverse</code> to extract the First SNP.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">snpdat <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(snp <span class="op">==</span><span class="st"> &quot;SNP1&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(counts, size, id) -&gt;</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span>smalldat</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw">head</span>(smalldat)</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; # A tibble: 6 x 3</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;   counts  size id           </span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;        </span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 1    298   354 Xushu18      </span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 2    187   187 Xushu18S1-001</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; 3    201   201 Xushu18S1-002</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt; 4    157   184 Xushu18S1-003</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 5    175   215 Xushu18S1-004</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; 6    283   283 Xushu18S1-005</span></a></code></pre></div>
+<p>We’ll extract the First SNP.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">smalldat &lt;-<span class="st"> </span>snpdat[snpdat<span class="op">$</span>snp <span class="op">==</span><span class="st"> &quot;SNP1&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;counts&quot;</span>, <span class="st">&quot;size&quot;</span>, <span class="st">&quot;id&quot;</span>)]</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">head</span>(smalldat)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; # A tibble: 6 x 3</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;   counts  size id           </span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;        </span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; 1    298   354 Xushu18      </span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; 2    187   187 Xushu18S1-001</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; 3    201   201 Xushu18S1-002</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; 4    157   184 Xushu18S1-003</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 5    175   215 Xushu18S1-004</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 6    283   283 Xushu18S1-005</span></a></code></pre></div>
 <p>We will separate the counts between the children and the parent (the first individual). Note that you do <em>not</em> need the parental counts to fit updog, but they can help improve estimates of the parameters in the updog model.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">pref    &lt;-<span class="st"> </span>smalldat<span class="op">$</span>counts[<span class="dv">1</span>]</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">psize   &lt;-<span class="st"> </span>smalldat<span class="op">$</span>size[<span class="dv">1</span>]</a>
@@ -409,7 +405,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>Elshire, Jeffrey C. AND Sun, Robert J. AND Glaubitz. 2011. “A Robust, Simple Genotyping-by-Sequencing (GBS) Approach for High Diversity Species.” <em>PLOS ONE</em> 6 (5). Public Library of Science: 1–10. <a href="https://doi.org/10.1371/journal.pone.0019379">https://doi.org/10.1371/journal.pone.0019379</a>.</p>
 </div>
 <div id="ref-gerard2018genotyping">
-<p>Gerard, David, Luis Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Genotyping Polyploids from Messy Sequencing Data.” <em>Genetics</em> 210 (3). Genetics: 789–807. <a href="https://doi.org/10.1534/genetics.118.301468">https://doi.org/10.1534/genetics.118.301468</a>.</p>
+<p>Gerard, David, Luís Felipe Ventorim Ferrão, Antonio Augusto Franco Garcia, and Matthew Stephens. 2018. “Genotyping Polyploids from Messy Sequencing Data.” <em>Genetics</em> 210 (3). Genetics: 789–807. <a href="https://doi.org/10.1534/genetics.118.301468">https://doi.org/10.1534/genetics.118.301468</a>.</p>
 </div>
 <div id="ref-shirasawa2017high">
 <p>Shirasawa, Kenta, Masaru Tanaka, Yasuhiro Takahata, Daifu Ma, Qinghe Cao, Qingchang Liu, Hong Zhai, et al. 2017. “A High-Density SNP Genetic Map Consisting of a Complete Set of Homologous Groups in Autohexaploid Sweetpotato (<em>Ipomoea Batatas</em>).” <em>Scientific Reports</em> 7. Nature Publishing Group. <a href="https://doi.org/10.1038/srep44207">https://doi.org/10.1038/srep44207</a>.</p>

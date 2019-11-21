@@ -4,8 +4,7 @@
 \alias{get_wik_mat_out}
 \title{E-step in \code{\link{flexdog}} where we now allow an outlier distribution.}
 \usage{
-get_wik_mat_out(probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias,
-  od)
+get_wik_mat_out(probk_vec, out_prop, refvec, sizevec, ploidy, seq, bias, od)
 }
 \arguments{
 \item{probk_vec}{The vector of current prior probabilities of each genotype.}
@@ -41,3 +40,4 @@ E-step in \code{\link{flexdog}} where we now allow an outlier distribution.
 \author{
 David Gerard
 }
+\keyword{internal}

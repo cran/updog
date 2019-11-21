@@ -4,11 +4,21 @@
 \alias{rgeno}
 \title{Simulate individual genotypes from one of the supported \code{\link{flexdog}} models.}
 \usage{
-rgeno(n, ploidy, model = c("hw", "bb", "norm", "ash", "f1", "s1", "f1pp",
-  "s1pp", "flex", "uniform"), allele_freq = NULL, od = NULL,
-  p1geno = NULL, p2geno = NULL, mode = NULL, pivec = NULL,
-  mu = NULL, sigma = NULL, p1_pair_weights = NULL,
-  p2_pair_weights = NULL)
+rgeno(
+  n,
+  ploidy,
+  model = c("hw", "bb", "norm", "ash", "f1", "s1", "f1pp", "s1pp", "flex", "uniform"),
+  allele_freq = NULL,
+  od = NULL,
+  p1geno = NULL,
+  p2geno = NULL,
+  mode = NULL,
+  pivec = NULL,
+  mu = NULL,
+  sigma = NULL,
+  p1_pair_weights = NULL,
+  p2_pair_weights = NULL
+)
 }
 \arguments{
 \item{n}{The number of observations.}
@@ -95,7 +105,7 @@ rgeno(n = 10, ploidy = ploidy, model = "hw", allele_freq = 0.75)
 \references{
 \itemize{
   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{bioRxiv}. doi: \href{https://doi.org/10.1101/751784}{10.1101/751784}.}
+  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{Bioinformatics}. doi: \href{https://doi.org/10.1093/bioinformatics/btz852}{10.1093/bioinformatics/btz852}.}
 }
 }
 \author{

@@ -1,4 +1,4 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -6,28 +6,28 @@ knitr::opts_chunk$set(
   fig.height=3.5
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 bias   <- 0.7
 od     <- 0.01
 seq    <- 0.001
 maxerr <- 0.05
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 library(updog)
 ploidy <- 4
 pgeno <- 2
 gene_dist <- get_q_array(ploidy = ploidy)[pgeno + 1, pgeno + 1, ]
 
-## ---- message=FALSE------------------------------------------------------
-library(tidyverse)
-tibble(x = 0:ploidy, y = 0, yend = gene_dist) %>%
-  ggplot(mapping = aes(x = x, y = y, xend = x, yend = yend)) +
+## ---- message=FALSE-----------------------------------------------------------
+library(ggplot2)
+distdf <- data.frame(x = 0:ploidy, y = 0, yend = gene_dist)
+ggplot(distdf, mapping = aes(x = x, y = y, xend = x, yend = yend)) +
   geom_segment(lineend = "round", lwd = 2) +
   theme_bw() +
   xlab("Allele Dosage") +
   ylab("Probability")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 err    <- Inf
 depth  <- 0
 while(err > maxerr) {
@@ -41,7 +41,7 @@ while(err > maxerr) {
 }
 depth
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 depth <- 30
 jd <- oracle_joint(n = depth,
                    ploidy = ploidy,
@@ -51,7 +51,7 @@ jd <- oracle_joint(n = depth,
                    dist = gene_dist)
 oracle_plot(jd)
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 omiss <- oracle_mis(n = depth,
                     ploidy = ploidy,
                     seq = seq,
@@ -66,7 +66,7 @@ ocorr <- oracle_cor(n = depth,
                     od = od,
                     dist = gene_dist)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ocorr <- oracle_cor(n = depth,
                     ploidy = ploidy,
                     seq = seq,
