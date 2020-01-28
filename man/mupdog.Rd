@@ -2,7 +2,7 @@
 % Please edit documentation in R/vem.R
 \name{mupdog}
 \alias{mupdog}
-\title{Multi-SNP updog.}
+\title{Using correlation between individuals for genotyping.}
 \usage{
 mupdog(
   refmat,
@@ -160,6 +160,8 @@ A list with some or all of the following elements:
 \description{
 A method to genotype autopolyploids using GBS or RAD-seq like data by accounting
 for correlations in the genotype distribution between the individuals.
+This is a very experimental function. You probably want to use
+\code{\link{multidog}()} instead.
 }
 \details{
 Blischak et al (2017) developed a genotyping approach for autopolyploids
@@ -176,7 +178,7 @@ Mupdog uses a variational Bayes approach to estimate all parameters of interest 
 the posterior probabilities of the genotypes for each individual at each locus.
 }
 \examples{
-\donttest{
+\dontrun{
 data(uitdewilligen)
 mout <- mupdog(refmat = uitdewilligen$refmat,
                sizemat = uitdewilligen$sizemat,

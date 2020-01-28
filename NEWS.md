@@ -1,3 +1,16 @@
+# updog 1.2.0
+
+- Adds `multidog()` for genotypying multiple SNP's using parallel computing.
+- Adds `plot.multidog()` for plotting the output of `multidog()`.
+- Adds `format_multidog()` for formatting the output of `multidog()` to be
+  a matrix.
+- Removes dependency on CVXR. This makes install and maintenance a little easier. 
+  The defaults for this specific problem were a little faster anyway.
+- No longer changes the color scale in `plot_geno()` based on what 
+  genotypes are present.
+- In .cpp files, we now coerce objects to be unsigned before comparing. This
+  gets rid of some warnings during install.
+
 # updog 1.1.3
 
 - Updates documentation to include the Bioinformatics publication,

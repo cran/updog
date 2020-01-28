@@ -24,7 +24,6 @@ flexdog_full(
   update_seq = TRUE,
   update_od = TRUE,
   mode = NULL,
-  use_cvxr = FALSE,
   itermax = 200,
   tol = 10^-4,
   fs1_alpha = 10^-3,
@@ -86,13 +85,6 @@ parameter.}
 \code{flexdog} will estimate the mode. This is the starting point of
 the allele frequency if \code{model = "hw"}. This should be
 \code{NULL} for all other options of \code{model}.}
-
-\item{use_cvxr}{A logical. If \code{model = "ash"}, then do you want
-to use the EM algorithm
-(\code{FALSE}) or a convex optimization program using
-the package CVXR (\code{TRUE})?
-Only available if CVXR is installed. Setting \code{use_cvxr} to
-\code{TRUE} is generally slower than setting it to \code{FALSE}.}
 
 \item{itermax}{The maximum number of EM iterations to run for each mode
 (if \code{model = "ash"}) or the total number of EM iterations to
@@ -359,6 +351,8 @@ plot(fout)
 Run \code{browseVignettes(package = "updog")} in R for example usage.
     Other useful functions include:
 \describe{
+    \item{\code{\link{multidog}}}{For running \code{flexdog} on multiple
+          SNP's.}
     \item{\code{\link{flexdog}}}{For a more user-friendly version of
           \code{flexdog_full}.}
     \item{\code{\link{rgeno}}}{For simulating genotypes under the allowable

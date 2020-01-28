@@ -34,6 +34,9 @@ distributions include the class of proportional normal distributions
 most robust to varying genotype distributions, but feel free to use more
 specialized priors if you have more information on the data.
 
+`multidog()` is a convenience function that let’s you run `flexdog()`
+over many SNP’s. It has support for parallel computing.
+
 Also provided are:
 
   - An experimental function `mupdog()`, which allows for correlation
@@ -94,23 +97,6 @@ with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("dcgerard/updog")
-```
-
-### CVXR
-
-If you want to use the `use_cvxr = TRUE` option in `flexdog` (not
-generally recommended), you will need to install the
-[CVXR](https://cran.r-project.org/package=CVXR) package. Before I could
-install CVXR in Ubuntu, I had to run in the terminal
-
-``` bash
-sudo apt-get install libmpfr-dev
-```
-
-and then run in R
-
-``` r
-install.packages("Rmpfr")
 ```
 
 ## How to Cite
