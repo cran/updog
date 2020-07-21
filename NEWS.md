@@ -1,6 +1,33 @@
+# updog 2.0.2
+
+This is a massive edit of the updog software. Major changes include:
+
+1. No more support of `model = "ash"`. It seemed that `model = "norm"`
+   was always better and faster, so I just got rid of the `"ash"` option.
+   This also extremely simplified the code.
+2. Removal of `mupdog()`. I think this was a good idea, but the 
+   computation was way too slow to be usable.
+3. Revision of `model = "f1pp"` and `model = "s1pp"`. These now include
+   interpretable parameterizations that are meant to be identified
+   via another R package. But support is only for tetraploids right now.
+4. `multidog()` now prints some nice ASCII art when it's run.
+5. `format_multidog()` now allows you to format multiple variables in terms of a multidimensional array.
+6. Fixes a bug where `format_multidog()` was reordering the SNP dimensions. This was fine as long as folks used dimnames properly, but now it should allow folks to also use dim positions.
+7. Updog now returns genotype log-likelihoods.
+
+
+# updog 1.2.1
+
+- Adds `filter_snp()` for filtering the output of `multidog()` based
+  on predicates in terms of the variables in `snpdf`.
+- Removes stringr from Imports. I was only using it in one place so I
+  replaced that code with base R code.
+- Removes Rmpfr from Suggests. No longer needed since CVXR is no longer
+  suggested.
+
 # updog 1.2.0
 
-- Adds `multidog()` for genotypying multiple SNP's using parallel computing.
+- Adds `multidog()` for genotypying multiple SNPs using parallel computing.
 - Adds `plot.multidog()` for plotting the output of `multidog()`.
 - Adds `format_multidog()` for formatting the output of `multidog()` to be
   a matrix.
@@ -14,7 +41,7 @@
 # updog 1.1.3
 
 - Updates documentation to include the Bioinformatics publication,
-  Gerard and Ferrão (2019) 
+  Gerard and Ferrão (2020) 
   \<[doi:10.1093/bioinformatics/btz852](https://doi.org/10.1093/bioinformatics/btz852)\>.
 - Adds the "internal" keyword to functions that most users don't need.
 - Removes the tidyverse from the Suggests field. I was only using this in 
@@ -22,7 +49,7 @@
 
 # updog 1.1.1
 
-- Updates documentation to include Gerard and Ferrão (2019) 
+- Updates documentation to include Gerard and Ferrão (2020) 
   \<[doi:10.1101/751784](https://doi.org/10.1101/751784)\>
   as a reference.
 - Minor fixes to documentation.

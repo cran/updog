@@ -4,12 +4,14 @@
 \name{uitdewilligen}
 \alias{uitdewilligen}
 \title{Subset of individuals and SNPs from Uitdewilligen et al (2013).}
-\format{A list containing three objects. Two matrices and a numeric scalar:
+\format{
+A list containing three objects. Two matrices and a numeric scalar:
 \describe{
   \item{refmat}{A matrix of read counts containing the reference allele. The rows index the individuals and the columns index the SNPs.}
   \item{sizemat}{A matrix of the total number of read counts. The rows index the individuals and the columns index the SNPs.}
   \item{ploidy}{The ploidy level of the species (just 4).}
-}}
+}
+}
 \source{
 \url{https://doi.org/10.1371/journal.pone.0062355}
 }
@@ -27,8 +29,5 @@ This is a subset of the data from Uitdewilligen et al (2013).
 \itemize{
   \item{Uitdewilligen, J. G., Wolters, A. M. A., Bjorn, B., Borm, T. J., Visser, R. G., & van Eck, H. J. (2013). \href{https://doi.org/10.1371/journal.pone.0062355}{A next-generation sequencing method for genotyping-by-sequencing of highly heterozygous autotetraploid potato.} \emph{PLoS One}, 8(5), e62355.}
 }
-}
-\seealso{
-\code{\link{mupout}}: a mupdog fit of these data.
 }
 \keyword{datasets}

@@ -19,35 +19,15 @@
 #'
 #' @source \url{https://doi.org/10.1371/journal.pone.0062355}
 #'
-#' @seealso \code{\link{mupout}}: a mupdog fit of these data.
 #'
 "uitdewilligen"
-
-
-#' A mupdog fit of the \code{\link{uitdewilligen}} data.
-#'
-#' @format An object of class \code{\link{mupdog}}.
-#'
-#' @return See the Format Section.
-#'
-#' @source The raw data that this was fit to can be found in \code{\link{uitdewilligen}}.
-#'
-#' @seealso
-#' \describe{
-#' \item{\code{\link{uitdewilligen}}}{The raw data.}
-#' \item{\code{\link{plot.mupdog}}}{A method to plot a \code{\link{mupdog}} object.}
-#' \item{\code{\link{summary.mupdog}}}{Calculate some summaries of a \code{\link{mupdog}} object.}
-#' \item{\code{\link{mupdog}}}{Function used to create this \code{\link{mupdog}} object.}
-#' }
-#'
-"mupout"
 
 #' GBS data from Shirasawa et al (2017)
 #'
 #' Contains counts of reference alleles and total read counts from the GBS data of Shirasawa et al (2017) for
-#' the three SNP's used as examples in Gerard et. al. (2018).
+#' the three SNPs used as examples in Gerard et. al. (2018).
 #'
-#' @format A \code{\link[tibble]{tibble}} with 419 rows and 4 columns:
+#' @format A \code{tibble} with 419 rows and 4 columns:
 #' \describe{
 #'     \item{id}{The identification label of the individuals.}
 #'     \item{snp}{The SNP label.}
@@ -55,7 +35,7 @@
 #'     \item{size}{The total number of read-counts at a given SNP.}
 #' }
 #'
-#' @return A \code{\link[tibble]{tibble}}. See the Format Section.
+#' @return A \code{tibble}. See the Format Section.
 #'
 #' @source \url{https://doi.org/10.1038/srep44207}
 #'

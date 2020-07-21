@@ -42,3 +42,10 @@ str(mout$inddf)
 genomat <- format_multidog(mout, varname = "geno")
 head(genomat)
 
+## -----------------------------------------------------------------------------
+dim(mout$snpdf)
+dim(mout$inddf)
+mout_cleaned <- filter_snp(mout, prop_mis < 0.05 & bias > exp(-1) & bias < exp(1))
+dim(mout_cleaned$snpdf)
+dim(mout_cleaned$inddf)
+

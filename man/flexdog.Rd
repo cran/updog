@@ -8,7 +8,7 @@ flexdog(
   refvec,
   sizevec,
   ploidy,
-  model = c("norm", "hw", "bb", "ash", "s1", "s1pp", "f1", "f1pp", "flex", "uniform",
+  model = c("norm", "hw", "bb", "s1", "s1pp", "f1", "f1pp", "flex", "uniform",
     "custom"),
   p1ref = NULL,
   p1size = NULL,
@@ -17,7 +17,6 @@ flexdog(
   snpname = NULL,
   bias_init = exp(c(-1, -0.5, 0, 0.5, 1)),
   verbose = TRUE,
-  outliers = FALSE,
   prior_vec = NULL,
   ...
 )
@@ -34,39 +33,34 @@ individual.}
 See Details for possible values.}
 
 \item{p1ref}{The reference counts for the first parent if
-\code{model = "f1"} (or \code{model = "f1pp"}), or for
-the only parent if \code{model = "s1"} (or \code{model = "s1pp"}).}
+\code{model = "f1"} or \code{model = "f1pp"}, or for
+the only parent if \code{model = "s1"} or \code{model = "s1pp"}.}
 
 \item{p1size}{The total counts for the first parent if
-\code{model = "f1"} (or \code{model = "f1pp"}),
-or for the only parent if \code{model = "s1"} (or \code{model = "s1pp"}).}
+\code{model = "f1"} or \code{model = "f1pp"},
+or for the only parent if \code{model = "s1"} or \code{model = "s1pp"}.}
 
 \item{p2ref}{The reference counts for the second parent if
-\code{model = "f1"} (or \code{model = "f1pp"}).}
+\code{model = "f1"} or \code{model = "f1pp"}.}
 
 \item{p2size}{The total counts for the second parent if
-\code{model = "f1"} (or \code{model = "f1pp"}).}
+\code{model = "f1"} or \code{model = "f1pp"}.}
 
 \item{snpname}{A string. The name of the SNP under consideration.
 This is just returned in the \code{input} list for your reference.}
 
 \item{bias_init}{A vector of initial values for the bias parameter
-over the multiple runs of \code{flexdog_full}.}
+over the multiple runs of \code{\link{flexdog_full}()}.}
 
 \item{verbose}{Should we output more (\code{TRUE}) or less
 (\code{FALSE})?}
-
-\item{outliers}{A logical. Should we allow for the inclusion of outliers
-(\code{TRUE}) or not (\code{FALSE}). Only supported when
-\code{model = "f1"} or \code{model = "s1"}. I wouldn't
-recommend it for any other model anyway.}
 
 \item{prior_vec}{The pre-specified genotype distribution. Only used if
 \code{model = "custom"} and must otherwise be \code{NULL}. If specified,
 then it should be a vector of length \code{ploidy + 1} with
 non-negative elements that sum to 1.}
 
-\item{...}{Additional parameters to pass to \code{\link{flexdog_full}}.}
+\item{...}{Additional parameters to pass to \code{\link{flexdog_full}()}.}
 }
 \value{
 An object of class \code{flexdog}, which consists
@@ -81,42 +75,91 @@ An object of class \code{flexdog}, which consists
   \item{\code{postmat}}{A matrix of posterior probabilities of each
       genotype for each individual. The rows index the individuals
       and the columns index the allele dosage.}
+  \item{\code{genologlike}}{A matrix of genotype \emph{log}-likelihoods of each
+      genotype for each individual. The rows index the individuals
+      and the columns index the allele dosage.}
   \item{\code{gene_dist}}{The estimated genotype distribution. The
       \code{i}th element is the proportion of individuals with
-      genotype \code{i-1}. If \code{outliers = TRUE}, then this
-      is conditional on the point not being an outlier.}
+      genotype \code{i-1}.}
   \item{\code{par}}{A list of the final estimates of the parameters
       of the genotype distribution. The elements included in \code{par}
       depends on the value of \code{model}:
       \describe{
-      \item{\code{model = "norm"}:}{\code{mu} is the normal mean and \code{sigma}
-          is the normal standard deviation (not variance).}
-      \item{\code{model = "hw"}:}{\code{alpha} is the major allele frequency.}
-      \item{\code{model = "bb"}:}{\code{alpha} is the major allele frequency and
-          \code{tau} is the overdispersion parameter (see the description of
-          \code{rho} in the Details of \code{\link{betabinom}}).}
-      \item{\code{model = "ash"}:}{\code{par} is an empty list.}
-      \item{\code{model = "s1"}:}{\code{pgeno} is the allele dosage of the parent and
-          \code{alpha} is the mixture proportion of the discrete uniform (included and
-          fixed at a small value mostly for numerical stability reasons). See the description
-          of \code{fs1_alpha} in \code{\link{flexdog_full}}.}
-      \item{\code{model = "s1pp"}:}{\code{pgeno} is the allele dosage of the parent and
-          \code{p1_pair_weights} contains a vector of mixing weights where element \code{i} is the
-          mixing proportion for the segregation distribution in row \code{i} of
-          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == pgeno, , drop = FALSE]}.}
-      \item{\code{model = "f1"}:}{\code{p1geno} is the allele dosage of the first parent,
-          \code{p2geno} is the allele dosage of the second parent, and \code{alpha}
-          is the mixture proportion of the discrete uniform (included and
-          fixed at a small value mostly for numerical stability reasons). See the description
-          of \code{fs1_alpha} in \code{\link{flexdog_full}}.}
-      \item{\code{model = "f1pp"}:}{\code{p1geno} is the allele dosage of the first parent,
-          \code{p2geno} is the allele dosage of the second parent,
-          \code{p1_pair_weights} contains a vector of mixing weights where element \code{i} is the
-          mixing proportion for the segregation distribution for parent 1 in row \code{i} of
-          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == p1geno, , drop = FALSE]},
-          and \code{p2_pair_weights} contains a vector of mixing weights where element \code{i} is the
-          mixing proportion for the segregation distribution for parent 2 in row \code{i} of
-          \code{get_bivalent_probs(ploidy)$probmat[get_bivalent_probs(ploidy)$lvec == p2geno, , drop = FALSE]}.}
+      \item{\code{model = "norm"}:}{
+        \describe{
+          \item{\code{mu}:}{The normal mean.}
+          \item{\code{sigma}:}{The normal standard deviation (not variance).}
+        }
+      }
+      \item{\code{model = "hw"}:}{
+        \describe{
+          \item{\code{alpha}:}{The major allele frequency.}
+        }
+      }
+      \item{\code{model = "bb"}:}{
+        \describe{
+          \item{\code{alpha}:}{The major allele frequency.}
+          \item{\code{tau}:}{The overdispersion parameter. See the
+              description of \code{rho} in the Details of
+              \code{\link{betabinom}()}.}
+        }
+      }
+      \item{\code{model = "s1"}:}{
+        \describe{
+          \item{\code{pgeno}:}{The allele dosage of the parent.}
+          \item{\code{alpha}:}{The mixture proportion of the discrete
+              uniform (included and fixed at a small value mostly for
+              numerical stability reasons). See the description
+              of \code{fs1_alpha} in \code{\link{flexdog_full}()}.}
+        }
+      }
+      \item{\code{model = "f1"}:}{
+        \describe{
+          \item{\code{p1geno}:}{The allele dosage of the first parent.}
+          \item{\code{p2geno}:}{The allele dosage of the second parent.}
+          \item{\code{alpha}:}{The mixture proportion of the discrete
+              uniform (included and fixed at a small value mostly for
+              numerical stability reasons). See the description
+              of \code{fs1_alpha} in \code{\link{flexdog_full}()}.}
+        }
+      }
+      \item{\code{model = "s1pp"}:}{
+        \describe{
+          \item{\code{ell1}:}{The estimated dosage of the parent.}
+          \item{\code{tau1}:}{The estimated double reduction parameter
+              of the parent. Available if \code{ell1} is \code{1}, \code{2},
+              or \code{3}. Identified if \code{ell1} is \code{1} or \code{3}.}
+          \item{\code{gamma1}:}{The estimated preferential pairing parameter.
+              Available if \code{ell1} is \code{2}. However, it is not
+              returned in an identified form.}
+          \item{\code{alpha}:}{The mixture proportion of the discrete
+              uniform (included and fixed at a small value mostly for
+              numerical stability reasons). See the description
+              of \code{fs1_alpha} in \code{\link{flexdog_full}()}.}
+        }
+      }
+      \item{\code{model = "f1pp"}:}{
+        \describe{
+          \item{\code{ell1}:}{The estimated dosage of parent 1.}
+          \item{\code{ell2}:}{The estimated dosage of parent 2.}
+          \item{\code{tau1}:}{The estimated double reduction parameter
+              of parent 1. Available if \code{ell1} is \code{1}, \code{2},
+              or \code{3}. Identified if \code{ell1} is \code{1} or \code{3}.}
+          \item{\code{tau2}:}{The estimated double reduction parameter
+              of parent 2. Available if \code{ell2} is \code{1}, \code{2},
+              or \code{3}. Identified if \code{ell2} is \code{1} or \code{3}.}
+          \item{\code{gamma1}:}{The estimated preferential pairing parameter
+              of parent 1. Available if \code{ell1} is \code{2}. However,
+              it is not returned in an identified form.}
+          \item{\code{gamma2}:}{The estimated preferential pairing parameter
+              of parent 2. Available if \code{ell2} is \code{2}. However,
+              it is not returned in an identified form.}
+          \item{\code{alpha}:}{The mixture proportion of the discrete
+              uniform (included and fixed at a small value mostly for
+              numerical stability reasons). See the description
+              of \code{fs1_alpha} in \code{\link{flexdog_full}()}.}
+        }
+      }
       \item{\code{model = "flex"}:}{\code{par} is an empty list.}
       \item{\code{model = "uniform"}:}{\code{par} is an empty list.}
       \item{\code{model = "custom"}:}{\code{par} is an empty list.}
@@ -144,20 +187,15 @@ An object of class \code{flexdog}, which consists
   \item{\code{input$snpname}}{The value of \code{snpname} provided by the user.}
   \item{\code{prop_mis}}{The posterior proportion of individuals
       genotyped incorrectly.}
-  \item{\code{out_prop}}{The estimated proportion of points that
-      are outliers. Only available if \code{outliers = TRUE}.}
-  \item{\code{prob_out}}{The ith element is the posterior probability
-      that individual i is an outlier. Only available if
-      \code{outliers = TRUE}.}
 }
 }
 \description{
 Genotype polyploid individuals from next generation
 sequencing (NGS) data while assuming the genotype distribution is one of
 several forms. \code{flexdog} does this while accounting for allele bias,
-overdispersion, sequencing error, and possibly outlying observations
-(if \code{model = "f1"} or \code{model = "s1"}). The method is described
-in detail in Gerard et. al. (2018) and Gerard and Ferrão (2019).
+overdispersion, sequencing error. The method is described
+in detail in Gerard et. al. (2018) and Gerard and Ferrão (2020). See
+\code{\link{multidog}()} for running flexdog on multiple SNPs in parallel.
 }
 \details{
 Possible values of the genotype distribution (values of \code{model}) are:
@@ -167,7 +205,7 @@ Possible values of the genotype distribution (values of \code{model}) are:
       Unlike the \code{"bb"} and \code{"hw"} options, this will allow for
       distributions both more and less dispersed than a binomial.
       This seems to be the most robust to violations in modeling assumptions, and so is the
-      default. This prior class was developed in Gerard and Ferrão (2019).}
+      default. This prior class was developed in Gerard and Ferrão (2020).}
   \item{\code{"hw"}}{A binomial distribution that results from assuming that
       the population is in Hardy-Weinberg equilibrium (HWE). This actually does
       pretty well even when there are minor to moderate deviations from HWE.
@@ -175,36 +213,24 @@ Possible values of the genotype distribution (values of \code{model}) are:
       are severe deviations from HWE.}
   \item{\code{"bb"}}{A beta-binomial distribution. This is an overdispersed
       version of \code{"hw"} and can be derived from a special case of the Balding-Nichols model.}
-  \item{\code{"ash"}}{Any unimodal prior. This can sometimes be sensitive to violations
-      in modeling assumptions, but tends to work better than the \code{"flex"} option.
-      This prior class was developed in Gerard and Ferrão (2019).}
   \item{\code{"s1"}}{This prior assumes the individuals are
       all full-siblings resulting
       from one generation of selfing. I.e. there is only
       one parent. This model assumes
       a particular type of meiotic behavior: polysomic
       inheritance with
-      bivalent, non-preferential pairing.
-      Since this is a pretty strong and well-founded prior,
-      we allow \code{outliers = TRUE} when \code{model = "s1"}.}
-  \item{\code{"s1pp"}}{The same as \code{"s1"} but accounts for possible
-      (and arbitrary levels of) preferential
-      pairing during meiosis. The only supported values of \code{ploidy} right now for
-      this option are \code{4} and \code{6}.}
+      bivalent, non-preferential pairing.}
   \item{\code{"f1"}}{This prior assumes the individuals are all
       full-siblings resulting
       from one generation of a bi-parental cross.
       This model assumes
       a particular type of meiotic behavior: polysomic
       inheritance with
-      bivalent, non-preferential pairing. Since this is
-      a pretty strong
-      and well-founded prior, we allow \code{outliers = TRUE}
-      when \code{model = "f1"}.}
-  \item{\code{"f1pp"}}{The same as \code{"f1"} but accounts for possible
-      (and arbitrary levels of) preferential
-      pairing during meiosis. This option is mostly untested for values of \code{ploidy}
-      greater than \code{6}.}
+      bivalent, non-preferential pairing.}
+  \item{\code{"f1pp"}}{This prior allows for double reduction
+      and preferential pairing in an F1 population of tretraploids.}
+  \item{\code{"s1pp"}}{This prior allows for double reduction
+      and preferential pairing in an S1 population of tretraploids.}
   \item{\code{"flex"}}{Generically any categorical distribution. Theoretically,
       this works well if you have a lot of individuals. In practice, it seems to
       be much less robust to violations in modeling assumptions.}
@@ -252,9 +278,9 @@ using WASP (\url{https://doi.org/10.1101/011221}). If you are successful
 in removing the allelic bias (because its only source was the read-mapping
 step), then setting \code{update_bias = FALSE} and \code{bias_init = 1}
 would be reasonable. You can visually inspect SNPs for bias by
-using \code{\link{plot_geno}}.
+using \code{\link{plot_geno}()}.
 
-\code{flexdog}, like most methods, is invariant to which allele you
+\code{flexdog()}, like most methods, is invariant to which allele you
 label as the "reference" and which you label as the "alternative".
 That is, if you set \code{refvec} with the number of alternative
 read-counts, then the resulting genotype estimates
@@ -264,18 +290,17 @@ will be the estimated allele dosage of the alternative allele.
 \donttest{
 
 ## An S1 population where the first individual
-## is the parent. Fit assuming outliers.
+## is the parent.
 data("snpdat")
 ploidy  <- 6
-refvec  <- snpdat$counts[snpdat$snp == "SNP3"]
-sizevec <- snpdat$size[snpdat$snp == "SNP3"]
+refvec  <- snpdat$counts[snpdat$snp == "SNP2"]
+sizevec <- snpdat$size[snpdat$snp == "SNP2"]
 fout    <- flexdog(refvec   = refvec[-1],
                    sizevec  = sizevec[-1],
                    ploidy   = ploidy,
                    model    = "s1",
                    p1ref    = refvec[1],
-                   p1size   = sizevec[1],
-                   outliers = TRUE)
+                   p1size   = sizevec[1])
 plot(fout)
 
 }
@@ -299,28 +324,28 @@ plot(fout)
 \references{
 \itemize{
   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-  \item{Gerard, D. and Ferrão, L. F. V. (2019). Priors for Genotyping Polyploids. \emph{Bioinformatics}. doi: \href{https://doi.org/10.1093/bioinformatics/btz852}{10.1093/bioinformatics/btz852}.}
+  \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \href{https://doi.org/10.1093/bioinformatics/btz852}{DOI:10.1093/bioinformatics/btz852}.}
 }
 }
 \seealso{
 Run \code{browseVignettes(package = "updog")} in R for example usage.
     Other useful functions include:
 \describe{
-    \item{\code{\link{multidog}}}{For running \code{flexdog} on multiple
-          SNP's.}
-    \item{\code{\link{flexdog_full}}}{For additional parameter options
-          when running \code{flexdog}.}
-    \item{\code{\link{rgeno}}}{For simulating genotypes under the allowable
-          prior models in \code{flexdog}.}
-    \item{\code{\link{rflexdog}}}{For simulating read-counts under the
-          assumed likelihood model in \code{flexdog}.}
-    \item{\code{\link{plot.flexdog}}}{For plotting the output of
-          \code{flexdog}.}
-    \item{\code{\link{oracle_mis}}}{For calculating the oracle genotyping
+    \item{\code{\link{multidog}()}}{For running \code{flexdog()} on multiple
+          SNPs in parallel.}
+    \item{\code{\link{flexdog_full}()}}{For additional parameter options
+          when running \code{flexdog()}.}
+    \item{\code{\link{rgeno}()}}{For simulating genotypes under the allowable
+          prior models in \code{flexdog()}.}
+    \item{\code{\link{rflexdog}()}}{For simulating read-counts under the
+          assumed likelihood model in \code{flexdog()}.}
+    \item{\code{\link{plot.flexdog}()}}{For plotting the output of
+          \code{flexdog()}.}
+    \item{\code{\link{oracle_mis}()}}{For calculating the oracle genotyping
           error rates. This is useful for read-depth calculations
           \emph{before} collecting data. After you have data, using
           the value of \code{prop_mis} is better.}
-    \item{\code{\link{oracle_cor}}}{For calculating the correlation
+    \item{\code{\link{oracle_cor}()}}{For calculating the correlation
           between the true genotypes and an oracle estimator
           (useful for read-depth calculations \emph{before}
           collecting data).}

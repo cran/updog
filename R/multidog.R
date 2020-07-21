@@ -3,25 +3,31 @@
 ################
 
 
-#' Fit \code{\link{flexdog}} to multiple SNP's.
+#' Fit \code{\link{flexdog}} to multiple SNPs.
 #'
-#' This is a convenience function that will run \code{\link{flexdog}} over many SNP's.
+#' This is a convenience function that will run \code{\link{flexdog}} over many SNPs.
 #' Support is provided for parallel computing through the doParallel package.
 #' This function has not been extensively tested. Please report any bugs to
 #' \url{http://github.com/dcgerard/updog/issues}.
 #'
 #' You should format your reference counts and total read counts in two
-#' separate matrices. The rows should index the markers (SNP's) and the
-#' columns should index the individuals. Row names are how we ID the SNP's
+#' separate matrices. The rows should index the markers (SNPs) and the
+#' columns should index the individuals. Row names are how we ID the SNPs
 #' and column names are how we ID the individuals, and so they are required
 #' attributes.
+#'
+#' If your data are in VCF files, I would recommend importing them using the
+#' VariantAnnotation package from Bioconductor
+#' \url{https://bioconductor.org/packages/VariantAnnotation/}. It's a great
+#' VCF parser.
 #'
 #' See the details of \code{\link{flexdog}} for the possible values of
 #' \code{model}.
 #'
-#' If \code{model = "f1"}, \code{model = "f1pp"}, \code{model = "s1"},
-#' or \code{model = "s1pp"} then the user may provide the individual ID
-#' for parent(s) via the \code{p1_id} and \code{p2_id} arguments.
+#' If \code{model = "f1"}, \code{model = "s1"}, \code{model = "f1pp"}
+#' or \code{model = "s1pp"} then the user may
+#' provide the individual ID for parent(s) via the \code{p1_id}
+#' and \code{p2_id} arguments.
 #'
 #' The output is a list containing two data frames. The first data frame,
 #' called \code{snpdf}, contains information on each SNP, such as the allele bias
@@ -33,23 +39,29 @@
 #' run \code{\link{flexdog}} in parallel. Only set \code{nc} greater than
 #' \code{1} if you are sure you have access to the proper number of cores.
 #' The upper bound on the value of \code{nc} you should try can be determined
-#' by running \code{parallel::detectCores()} in R.
+#' by running \code{parallel::detectCores()} in R. Most admins of high
+#' performance computing environments place limits on the number of cores
+#' you can use at any one time. So if you are using \code{multidog()} on
+#' a supercomputer, do not use \code{parallel::detectCores()} and discuss
+#' with your admin how you can safely run parallel jobs.
 #'
-#' SNP's that contain 0 reads (or all missing data) are entirely removed.
+#' SNPs that contain 0 reads (or all missing data) are entirely removed.
 #'
 #' @inheritParams flexdog
 #' @param refmat A matrix of reference read counts. The columns index
-#'     the individuals and the rows index the markers (SNP's). This matrix must have
+#'     the individuals and the rows index the markers (SNPs). This matrix must have
 #'     rownames (for the names of the markers) and column names (for the names
 #'     of the individuals). These names must match the names in \code{sizemat}.
 #' @param sizemat A matrix of total read counts. The columns index
-#'     the individuals and the rows index the markers (SNP's). This matrix must have
+#'     the individuals and the rows index the markers (SNPs). This matrix must have
 #'     rownames (for the names of the markers) and column names (for the names
 #'     of the individuals). These names must match the names in \code{refmat}.
 #' @param nc The number of computing cores to use. This should never be
 #'     more than the number of cores available in your computing environment.
 #'     You can determine the maximum number of available cores by running
-#'     \code{parallel::detectCores()} in R.
+#'     \code{parallel::detectCores()} in R. But discuss how to run parallel
+#'     jobs with your admin if you are using \code{multidog()} on a
+#'     supercomputer.
 #' @param p1_id The ID of the first parent. This should be a character of
 #'     length 1. This should correspond to a single column name in \code{refmat}
 #'     and \code{sizemat}.
@@ -59,8 +71,8 @@
 #'
 #' @return A list-like object of two data frames.
 #' \describe{
-#' \item{\code{snpdf}}{A data frame containing properties of the SNP's (markers).
-#'     The rows index the SNP's. The variables include:
+#' \item{\code{snpdf}}{A data frame containing properties of the SNPs (markers).
+#'     The rows index the SNPs. The variables include:
 #'     \describe{
 #'     \item{\code{snp}}{The name of the SNP (marker).}
 #'     \item{\code{bias}}{The estimated allele bias of the SNP.}
@@ -74,6 +86,10 @@
 #'     \item{\code{ploidy}}{The provided ploidy of the species.}
 #'     \item{\code{model}}{The provided model for the prior genotype
 #'         distribution.}
+#'     \item{\code{p1ref}}{The user-provided reference read counts of parent 1.}
+#'     \item{\code{p1size}}{The user-provided total read counts of parent 1.}
+#'     \item{\code{p2ref}}{The user-provided reference read counts of parent 2.}
+#'     \item{\code{p2size}}{The user-provided total read counts of parent 2.}
 #'     \item{\code{Pr_k}}{The estimated frequency of individuals with genotype
 #'         k, where k can be any integer between 0 and the ploidy level.}
 #'     \item{Model specific parameter estimates}{See the return value of
@@ -100,10 +116,22 @@
 #'     \item{\code{Pr_k}}{The posterior probability that a given individual
 #'          at a given SNP has genotype k, where k can vary from 0 to the
 #'          ploidy level of the species.}
+#'     \item{\code{logL_k}}{The genotype \emph{log}-likelihoods for dosage
+#'          k for a given individual at a given SNP, where k can vary f
+#'          rom 0 to the ploidy level of the species.}
 #'     }}
 #' }
 #'
 #' @author David Gerard
+#'
+#' @seealso
+#' \itemize{
+#'   \item{\code{\link{flexdog}()}:}{For the underlying genotyping function.}
+#'   \item{\code{\link{format_multidog}()}:}{For converting the output
+#'       of \code{multidog()} to a matrix.}
+#'   \item{\code{\link{filter_snp}()}:}{For filtering SNPs using the
+#'       output of \code{multidog()}.}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -120,15 +148,36 @@
 multidog <- function(refmat,
                      sizemat,
                      ploidy,
-                     model = c("norm", "hw", "bb", "ash", "s1", "s1pp",
-                               "f1", "f1pp", "flex", "uniform", "custom"),
+                     model = c("norm",
+                               "hw",
+                               "bb",
+                               "s1",
+                               "s1pp",
+                               "f1",
+                               "f1pp",
+                               "flex",
+                               "uniform",
+                               "custom"),
                      nc = 1,
                      p1_id = NULL,
                      p2_id = NULL,
                      bias_init = exp(c(-1, -0.5, 0, 0.5, 1)),
-                     outliers = FALSE,
                      prior_vec = NULL,
                      ...) {
+
+  cat(paste0(  "    |                                   *.#,%    ",
+             "\n   |||                                 *******/  ",
+             "\n |||||||    (**..#**.                  */   **/  ",
+             "\n|||||||||    */****************************/*%   ",
+             "\n   |||    &****..,*.************************/    ",
+             "\n   |||     (....,,,*,...****%********/(******    ",
+             "\n   |||                ,,****%////,,,,./.****/    ",
+             "\n   |||                  /**//         .*///....  ",
+             "\n   |||                  .*/*/%#         .,/   ., ",
+             "\n   |||               , **/   #%         .*    .. ",
+             "\n   |||                               ,,,*        ",
+             "\n\nWorking on it..."))
+
   ## Check input --------------------------------------------------------------
   assertthat::assert_that(is.matrix(refmat))
   assertthat::assert_that(is.matrix(sizemat))
@@ -157,7 +206,7 @@ multidog <- function(refmat,
     stopifnot(is.character(p1_id))
     stopifnot(length(p1_id) == 1)
     stopifnot(is.element(el = p1_id, set = colnames(refmat)))
-    stopifnot(model == "f1" | model == "f1pp" | model == "s1" | model == "s1pp")
+    stopifnot(model == "f1" | model == "s1" | model == "f1pp" | model == "s1pp")
   }
   if (!is.null(p2_id)) {
     stopifnot(is.character(p2_id))
@@ -199,7 +248,7 @@ multidog <- function(refmat,
     refmat  <- refmat[!(rownames(refmat) %in% bad_snps), , drop = FALSE]
   }
 
-  ## Get list of SNP's ---------------------------------------------------------
+  ## Get list of SNPs ---------------------------------------------------------
   snplist <- rownames(refmat)
 
   ## Register workers ----------------------------------------------------------
@@ -213,10 +262,10 @@ multidog <- function(refmat,
     }
   }
 
-  ## Fit flexdog on all SNP's --------------------------------------------------
+  ## Fit flexdog on all SNPs --------------------------------------------------
   i <- 1
   outlist <- foreach::foreach(i = seq_along(snplist),
-                              .export = c("flexdog", "get_bivalent_probs")) %dopar% {
+                              .export = c("flexdog")) %dopar% {
                                 current_snp <- snplist[[i]]
 
                                 refvec <- refmat[current_snp, indlist, drop = TRUE]
@@ -249,13 +298,27 @@ multidog <- function(refmat,
                                                 snpname   = current_snp,
                                                 bias_init = bias_init,
                                                 verbose   = FALSE,
-                                                outliers  = outliers,
                                                 prior_vec = prior_vec,
-                                                ...)
+                                                )
 
 
                                 names(fout$gene_dist)  <- paste0("Pr_", seq(0, ploidy, by = 1))
                                 colnames(fout$postmat) <- paste0("Pr_", seq(0, ploidy, by = 1))
+                                colnames(fout$genologlike) <- paste0("logL_", seq(0, ploidy, by = 1))
+
+                                ## change to NA so can return in data frame ----
+                                if (is.null(p1_ref)) {
+                                  p1_ref <- NA_real_
+                                }
+                                if (is.null(p1_size)) {
+                                  p1_size <- NA_real_
+                                }
+                                if (is.null(p2_ref)) {
+                                  p2_ref <- NA_real_
+                                }
+                                if (is.null(p2_size)) {
+                                  p2_size <- NA_real_
+                                }
 
                                 snpprop <- cbind(
                                   data.frame(snp      = current_snp,
@@ -266,41 +329,16 @@ multidog <- function(refmat,
                                              num_iter = fout$num_iter,
                                              llike    = fout$llike,
                                              ploidy   = fout$input$ploidy,
-                                             model    = fout$input$model),
+                                             model    = fout$input$model,
+                                             p1ref    = p1_ref,
+                                             p1size   = p1_size,
+                                             p2ref    = p2_ref,
+                                             p2size   = p2_size),
                                   as.data.frame(matrix(fout$gene_dist, nrow = 1, dimnames = list(NULL, names(fout$gene_dist))))
                                 )
 
 
-                                if (model == "f1pp") {
-                                  blist <- get_bivalent_probs(fout$input$ploidy)
-
-                                  p1weightvec <- rep(0, length = length(blist$lvec))
-                                  names(p1weightvec) <- paste0("p1(", apply(blist$pmat, 1, paste, collapse = ","), ")")
-                                  p1weightvec[blist$lvec == fout$par$p1geno] <- fout$par$p1_pair_weights
-
-                                  p2weightvec <- rep(0, length = length(blist$lvec))
-                                  names(p2weightvec) <- paste0("p2(", apply(blist$pmat, 1, paste, collapse = ","), ")")
-                                  p2weightvec[blist$lvec == fout$par$p2geno] <- fout$par$p2_pair_weights
-
-                                  fout$par$p1_pair_weights <- NULL
-                                  fout$par$p2_pair_weights <- NULL
-
-                                  par_vec_output <- c(unlist(fout$par), p1weightvec, p2weightvec)
-                                  snpprop <- cbind(snpprop, as.data.frame(matrix(par_vec_output, nrow = 1, dimnames = list(NULL, names(par_vec_output)))))
-
-                                } else if (model == "s1pp") {
-                                  blist <- get_bivalent_probs(fout$input$ploidy)
-
-                                  p1weightvec <- rep(0, length = length(blist$lvec))
-                                  names(p1weightvec) <- paste0("p1(", apply(blist$pmat, 1, paste, collapse = ","), ")")
-                                  p1weightvec[blist$lvec == fout$par$p1geno] <- fout$par$p1_pair_weights
-
-                                  fout$par$p1_pair_weights <- NULL
-
-                                  par_vec_output <- c(unlist(fout$par), p1weightvec)
-                                  snpprop <- cbind(snpprop, as.data.frame(matrix(par_vec_output, nrow = 1, dimnames = list(NULL, names(par_vec_output)))))
-
-                                } else if (length(fout$par) > 0) {
+                                if (length(fout$par) > 0) {
                                   par_vec_output <- unlist(fout$par)
                                   snpprop <- cbind(snpprop, as.data.frame(matrix(par_vec_output, nrow = 1, dimnames = list(NULL, names(par_vec_output)))))
                                 }
@@ -314,7 +352,8 @@ multidog <- function(refmat,
                                              geno        = fout$geno,
                                              postmean    = fout$postmean,
                                              maxpostprob = fout$maxpostprob),
-                                  fout$postmat)
+                                  fout$postmat,
+                                  fout$genologlike)
 
                                 list(indprop, snpprop)
                               }
@@ -328,6 +367,9 @@ multidog <- function(refmat,
   retlist <- list(snpdf = as.data.frame(snpdf),
                   inddf = as.data.frame(inddf))
   class(retlist) <- "multidog"
+
+  cat("done!")
+
   return(retlist)
 }
 
@@ -354,10 +396,17 @@ is.multidog <- function(x) {
 #' Plot the output of \code{\link{multidog}}.
 #'
 #' Produce genotype plots from the output of \code{\link{multidog}}. You may
-#' select which SNP's to plot.
+#' select which SNPs to plot.
+#'
+#' On a genotype plot, the x-axis contains the counts of the non-reference allele and the y-axis
+#' contains the counts of the reference allele. The dashed lines are the expected counts (both reference and alternative)
+#' given the sequencing error rate and the allele-bias. The plots are color-coded by the maximum-a-posterior genotypes.
+#' Transparency is proportional to the maximum posterior probability for an
+#' individual's genotype. Thus, we are less certain of the genotype of more transparent individuals. These
+#' types of plots are used in Gerard et. al. (2018) and Gerard and Ferrão (2020).
 #'
 #' @param x The output of \code{\link{multidog}}.
-#' @param indices A vector of integers. The indices of the SNP's to plot.
+#' @param indices A vector of integers. The indices of the SNPs to plot.
 #' @param ... not used.
 #'
 #' @author David Gerard
@@ -365,6 +414,12 @@ is.multidog <- function(x) {
 #' @export
 #'
 #' @seealso \code{\link{plot_geno}}.
+#'
+#' @references
+#' \itemize{
+#'   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
+#'   \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \href{https://doi.org/10.1093/bioinformatics/btz852}{DOI:10.1093/bioinformatics/btz852}.}
+#' }
 #'
 plot.multidog <- function(x, indices = seq(1, min(5, nrow(x$snpdf))), ...) {
   assertthat::assert_that(is.multidog(x))
@@ -400,14 +455,19 @@ plot.multidog <- function(x, indices = seq(1, min(5, nrow(x$snpdf))), ...) {
 }
 
 
-#' Return matricized elements from the output of \code{\link{multidog}}.
+#' Return arrayicized elements from the output of \code{\link{multidog}}.
 #'
 #' This function will allow you to have genotype estimates, maximum posterior
-#' probability, and other values in the form of a matrix.
+#' probability, and other values in the form of a matrix/array. If multiple
+#' variable names are provided, the data are formatted as a 3-dimensional
+#' array with the dimensions corresponding to (individuals, SNPs, variables).
+#'
+#' Note that the order of the individuals will be reshuffled. The order of the
+#' SNPs should be the same as in \code{x$snpdf}.
 #'
 #' @param x The output of \code{multidog}.
-#' @param varname The variable whose values populate the cells. This should
-#'     be a single columne from \code{x$inddf}.
+#' @param varname A character vector of the variable names whose values
+#'     populate the cells. These should be column names from \code{x$inddf}.
 #'
 #' @author David Gerard
 #'
@@ -418,12 +478,68 @@ format_multidog <- function(x, varname = "geno") {
   assertthat::assert_that(!is.null(x$inddf))
   assertthat::assert_that(is.data.frame(x$inddf))
   assertthat::assert_that(is.character(varname))
-  assertthat::are_equal(length(varname), 1)
-  assertthat::assert_that(varname %in% colnames(x$inddf))
+  stopifnot(varname %in% colnames(x$inddf))
 
-  matout <- reshape2::acast(data      = x$inddf[, c("ind", "snp", varname)],
-                            formula   = snp ~ ind,
-                            value.var = varname)
+  snporder <- x$snpdf[["snp"]]
+  if (length(varname) == 1) {
+    matout <- reshape2::acast(data      = x$inddf[, c("ind", "snp", varname)],
+                              formula   = snp ~ ind,
+                              value.var = varname)
+    matout <- matout[match(snporder, rownames(matout)), ]
+  } else {
+    matout <- reshape2::acast(
+      data = reshape2::melt(data = x$inddf[, c("ind", "snp", varname)],
+                            id.vars = c("ind", "snp"),
+                            measure.vars = varname),
+      formula = snp ~ ind ~ variable,
+      value.var = "value"
+    )
+    names(dimnames(matout)) <- c("snp", "ind", "variable")
+    matout <- matout[match(snporder, dimnames(matout)[["snp"]]), , ]
+  }
 
   return(matout)
 }
+
+#' Filter SNPs based on the output of \code{\link{multidog}()}.
+#'
+#' Filter based on provided logical predicates in terms of the variable
+#' names in \code{x$snpdf}. This function filters both \code{x$snpdf}
+#' and \code{x$inddf}.
+#'
+#' @param x The output of \code{multidog}.
+#' @param expr Logical predicate expression defined in terms of the variables
+#'     in \code{x$snpdf}. Only SNPs where the condition evaluates to
+#'     \code{TRUE} are kept.
+#'
+#' @examples
+#' \dontrun{
+#' data("uitdewilligen")
+#' mout <- multidog(refmat = t(uitdewilligen$refmat),
+#'                  sizemat = t(uitdewilligen$sizemat),
+#'                  ploidy = uitdewilligen$ploidy,
+#'                  nc = 2)
+#'
+#' ## The following filters are for educational purposes only and should
+#' ## not be taken as a default filter:
+#' mout2 <- filter_snp(mout, bias < 0.8 & od < 0.003)
+#' }
+#'
+#' @seealso
+#' \itemize{
+#'   \item{\code{\link{multidog}()}:}{For the variables in \code{x$snpdf}
+#'       which you can filter by.}
+#' }
+#'
+#' @author David Gerard
+#'
+#' @export
+filter_snp <- function(x, expr) {
+  assertthat::assert_that(is.multidog(x))
+  cond <- eval(expr = substitute(expr), envir = x$snpdf)
+  x$snpdf <- x$snpdf[cond, , drop = FALSE]
+  goodsnps <- x$snpdf$snp
+  x$inddf <- x$inddf[x$inddf$snp %in% goodsnps, , drop = FALSE]
+  return(x)
+}
+
