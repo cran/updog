@@ -1,6 +1,7 @@
 context("dbetabinom")
 
 test_that("dbetabinom works", {
+  skip_on_os(os = "mac", arch = "aarch64")
 
   if (requireNamespace("SuppDists", quietly = TRUE)) {
 
@@ -47,6 +48,7 @@ test_that("dbetabinom works", {
 )
 
 test_that("pbetabinom works ok", {
+  skip_on_os(os = "mac", arch = "aarch64")
 
   if (requireNamespace("SuppDists", quietly = TRUE)) {
 
@@ -83,12 +85,13 @@ test_that("pbetabinom works ok", {
 
 
 test_that("qbetabinom works", {
+  skip_on_os(os = "mac", arch = "aarch64")
 
   probseq <- c(0, 0.2, 0.25, 0.4, 0.5, 0.7, 0.7, 1)
   rway <- qbinom(p = probseq, size = 2, prob = 0.5)
 
   myway <- rep(NA, length = length(probseq))
-  for (index in 1:length(probseq)) {
+  for (index in seq_along(probseq)) {
     myway[index] <- qbetabinom_double(p = probseq[index], size = 2, mu = 0.5, rho = 0)
   }
 
@@ -108,7 +111,7 @@ test_that("qbetabinom works", {
     pvec <- c(0, p0, p0 + 10^-6, 1 - 10^-6, 1)
     suppway <- qbetabinom_suppdists(pvec, 2, 0.5, 0.1, FALSE)
     myway <- rep(NA, length = length(pvec))
-    for (index in 1:length(pvec)) {
+    for (index in seq_along(pvec)) {
       myway[index] <- qbetabinom_double(pvec[index], 2, 0.5, 0.1)
     }
 
@@ -126,6 +129,8 @@ test_that("qbetabinom works", {
 
 
 test_that("rbetabinom works", {
+  skip_on_os(os = "mac", arch = "aarch64")
+
   set.seed(1)
   rbbout <- c(table(rbetabinom(n = 10000, size = 2, mu = 0.3, rho = 0.1))) / 10000
   dbbout <- dbetabinom(x = 0:2, size = 2, mu = 0.3, rho = 0.1, log = FALSE)

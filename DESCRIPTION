@@ -1,6 +1,6 @@
 Package: updog
 Title: Flexible Genotyping for Polyploids
-Version: 2.0.2
+Version: 2.1.1
 Authors@R: person("David", 
                   "Gerard",
                   email = "gerard.1787@gmail.com", 
@@ -22,18 +22,21 @@ Description: Implements empirical Bayes approaches to genotype
        on the implemented methods.
 Depends: R (>= 3.4.0)
 License: GPL-3
-BugReports: http://github.com/dcgerard/updog/issues
+BugReports: https://github.com/dcgerard/updog/issues
+URL: https://github.com/dcgerard/updog/
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 LinkingTo: Rcpp, RcppArmadillo
-Imports: Rcpp (>= 0.12.16), RcppArmadillo, assertthat, foreach,
-        doParallel, ggplot2, ggthemes, reshape2
-Suggests: covr, testthat, SuppDists, knitr, rmarkdown
+Imports: Rcpp (>= 0.12.16), RcppArmadillo, assertthat, ggplot2,
+        ggthemes, reshape2, foreach, future, doFuture, doRNG, methods,
+        iterators
+Suggests: covr, testthat, SuppDists, knitr, rmarkdown,
+        VariantAnnotation, GenomicRanges, S4Vectors, IRanges
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2020-07-20 21:48:56 UTC; dgerard
+Packaged: 2021-10-25 13:57:14 UTC; dgerard
 Author: David Gerard [aut, cre] (<https://orcid.org/0000-0001-9450-5023>)
 Maintainer: David Gerard <gerard.1787@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-07-21 08:40:02 UTC
+Date/Publication: 2021-10-25 23:10:02 UTC

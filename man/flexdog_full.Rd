@@ -31,7 +31,8 @@ flexdog_full(
   p2ref = NULL,
   p2size = NULL,
   snpname = NULL,
-  prior_vec = NULL
+  prior_vec = NULL,
+  seq_upper = 0.05
 )
 }
 \arguments{
@@ -112,6 +113,10 @@ This is just returned in the \code{input} list for your reference.}
 \code{model = "custom"} and must otherwise be \code{NULL}. If specified,
 then it should be a vector of length \code{ploidy + 1} with
 non-negative elements that sum to 1.}
+
+\item{seq_upper}{The upper bound on the possible sequencing error rate.
+Default is 0.05, but you should adjust this if you have prior knowledge
+on the sequencing error rate of the sequencing technology.}
 }
 \value{
 An object of class \code{flexdog}, which consists
@@ -326,7 +331,7 @@ you may fit the model assuming no allelic bias by setting
 
 Prior to using \code{flexdog}, during the read-mapping step,
 you could try to get rid of allelic bias by
-using WASP (\url{https://doi.org/10.1101/011221}). If you are successful
+using WASP (\doi{10.1101/011221}). If you are successful
 in removing the allelic bias (because its only source was the read-mapping
 step), then setting \code{update_bias = FALSE} and \code{bias_init = 1}
 would be reasonable. You can visually inspect SNPs for bias by
@@ -355,8 +360,8 @@ plot(fout)
 }
 \references{
 \itemize{
-  \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-  \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \href{https://doi.org/10.1093/bioinformatics/btz852}{DOI:10.1093/bioinformatics/btz852}.}
+  \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. \doi{10.1534/genetics.118.301468}.}
+  \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \doi{10.1093/bioinformatics/btz852}.}
 }
 }
 \seealso{

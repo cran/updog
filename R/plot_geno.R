@@ -44,8 +44,8 @@
 #'
 #' @references
 #' \itemize{
-#'   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. doi: \href{https://doi.org/10.1534/genetics.118.301468}{10.1534/genetics.118.301468}.}
-#'   \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \href{https://doi.org/10.1093/bioinformatics/btz852}{DOI:10.1093/bioinformatics/btz852}.}
+#'   \item{Gerard, D., Ferrão, L. F. V., Garcia, A. A. F., & Stephens, M. (2018). Genotyping Polyploids from Messy Sequencing Data. \emph{Genetics}, 210(3), 789-807. \doi{10.1534/genetics.118.301468}.}
+#'   \item{Gerard, David, and Luís Felipe Ventorim Ferrão. "Priors for genotyping polyploids." Bioinformatics 36, no. 6 (2020): 1795-1800. \doi{10.1093/bioinformatics/btz852}.}
 #' }
 #'
 #' @author David Gerard
@@ -177,7 +177,7 @@ plot_geno <- function(refvec,
   if (!is.null(geno) | !is.null(p1geno) | !is.null(p2geno)) {
     if (use_colorblind & requireNamespace("ggthemes", quietly = TRUE)) {
       possible_colors <- paste0(ggthemes::colorblind_pal()(ploidy + 1))
-      possible_colors <- possible_colors[length(possible_colors):1]
+      possible_colors <- possible_colors[rev(seq_along(possible_colors))]
       pl <- pl + ggplot2::scale_color_manual(values = possible_colors, drop = FALSE, na.translate = TRUE, na.value = "gray50")
     } else if (use_colorblind) {
       pl <- pl + ggplot2::scale_color_hue(drop = FALSE, na.translate = TRUE, na.value = "gray50")
