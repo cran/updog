@@ -1,3 +1,7 @@
+# updog 2.1.3
+
+- Bug fix: Use `&&` instead of `&` in C++.
+
 # updog 2.1.2
 
 - Fixed a bug in my use of `assertthat::are_equal()` and `testthat::expect_equal()`. See 21 Jan 2022 [R-devel/NEWS](https://developer.r-project.org/blosxom.cgi/R-devel/NEWS) where it states:
@@ -110,10 +114,7 @@ This is a massive edit of the updog software. Major changes include:
     > individuals mis-genotyped. So if you want only SNPS that
     > accurately genotype, say, 95% of the individuals, you could
     > discard all SNPs with a prop_mis **over 0.05**.
-- I've now exported some C++ functions that I think are useful. You
-  can call them in the usual way:
-  <https://r-pkgs.org/src.html#cpp-import>.
-
+- I've now exported some C++ functions that I think are useful. You can call them in the usual way.
 
 # updog 0.99.0
 
