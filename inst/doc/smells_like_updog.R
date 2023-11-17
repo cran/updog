@@ -6,12 +6,12 @@ knitr::opts_chunk$set(
   fig.height=3.5
 )
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 set.seed(1)
 library(updog)
 data("snpdat")
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 smalldat <- snpdat[snpdat$snp == "SNP1", c("counts", "size", "id")]
 head(smalldat)
 
@@ -22,7 +22,7 @@ oref    <- smalldat$counts[-1]
 osize   <- smalldat$size[-1]
 ploidy  <- 6 # sweet potatoes are hexaploid
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 plot_geno(refvec = oref, sizevec = osize, ploidy = ploidy)
 
 ## -----------------------------------------------------------------------------

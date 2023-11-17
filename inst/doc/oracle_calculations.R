@@ -12,13 +12,13 @@ od     <- 0.01
 seq    <- 0.001
 maxerr <- 0.05
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 library(updog)
 ploidy <- 4
 pgeno <- 2
 gene_dist <- get_q_array(ploidy = ploidy)[pgeno + 1, pgeno + 1, ]
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 library(ggplot2)
 distdf <- data.frame(x = 0:ploidy, y = 0, yend = gene_dist)
 ggplot(distdf, mapping = aes(x = x, y = y, xend = x, yend = yend)) +
@@ -51,7 +51,7 @@ jd <- oracle_joint(n = depth,
                    dist = gene_dist)
 oracle_plot(jd)
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 omiss <- oracle_mis(n = depth,
                     ploidy = ploidy,
                     seq = seq,

@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -30,10 +30,10 @@ mout <- multidog(refmat = refmat,
                  model = "norm",
                  nc = 2)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  future::plan(future::multisession, workers = nc)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  future::plan(future::multicore, workers = 2)
 #  mout <- multidog(refmat = refmat,
 #                   sizemat = sizemat,
@@ -63,9 +63,4 @@ dim(mout$inddf)
 mout_cleaned <- filter_snp(mout, prop_mis < 0.05 & bias > exp(-1) & bias < exp(1))
 dim(mout_cleaned$snpdf)
 dim(mout_cleaned$inddf)
-
-## ---- eval = FALSE------------------------------------------------------------
-#  # install.packages("BiocManager")
-#  # BiocManager::install(c("VariantAnnotation", "GenomicRanges", "S4Vectors", "IRanges"))
-#  export_vcf(obj = mout, filename = "./multidog_fit.vcf")
 

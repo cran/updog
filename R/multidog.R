@@ -166,7 +166,7 @@ combine_flex <- function(...) {
 #' @author David Gerard
 #'
 #' @seealso
-#' \itemize{
+#' \describe{
 #'   \item{\code{\link{flexdog}()}:}{For the underlying genotyping function.}
 #'   \item{\code{\link{format_multidog}()}:}{For converting the output
 #'       of \code{multidog()} to a matrix.}
@@ -625,7 +625,7 @@ format_multidog <- function(x, varname = "geno") {
 #' }
 #'
 #' @seealso
-#' \itemize{
+#' \describe{
 #'   \item{\code{\link{multidog}()}:}{For the variables in \code{x$snpdf}
 #'       which you can filter by.}
 #' }
@@ -683,12 +683,15 @@ filter_snp <- function(x, expr) {
 #' spvcf <- readVcf("./sweet_potato.vcf")
 #' }
 #'
-#'
+#' @noRd
 export_vcf <- function(obj, filename) {
   if (requireNamespace("VariantAnnotation", quietly = TRUE) &&
       requireNamespace("GenomicRanges", quietly = TRUE) &&
       requireNamespace("S4Vectors", quietly = TRUE) &&
       requireNamespace("IRanges", quietly = TRUE)) {
+
+    ## Get sample neames
+    indvec <- colnames(format_multidog(x = obj, varname = "postmean"))
 
     ploidy <- unique(obj$snpdf$ploidy)
     stopifnot(length(ploidy) == 1)
@@ -738,17 +741,17 @@ export_vcf <- function(obj, filename) {
         strand=NULL,
         seqinfo = NULL,
         names = obj$snpdf$snp),
-      colData = as(matrix(nrow = nind, ncol = 0), "DataFrame"),
+      colData = S4Vectors::DataFrame(row.names = indvec),
       exptData = list(
         header = VariantAnnotation::VCFHeader(
           reference = character(),
-          samples = character(),
+          samples = indvec,
           header = IRanges::DataFrameList(
             fileformat = S4Vectors::DataFrame(row.names = "fileformat", Value = "VCFv4.3"),
             fileDate = S4Vectors::DataFrame(row.names = "fileDate", Value = gsub("-", "", Sys.Date())),
             source = S4Vectors::DataFrame(row.names = "source", Value = paste0("updogv", utils::packageVersion("updog"))),
             FORMAT = S4Vectors::DataFrame(row.names = c("AD", "DP", "DS", "GP", "GL"),
-                                          Number = c("R", "1", "1", "G", "G"),
+                                          Number = c(2, "1", "1", as.character(ploidy + 1), as.character(ploidy + 1)),
                                           Type = c("Integer", "Integer", "Float", "Float", "Float"),
                                           Description = c("Read depth for each allele",
                                                           "Read depth",
@@ -777,4 +780,3 @@ export_vcf <- function(obj, filename) {
                    " \"GenomicRanges\", \"S4Vectors\", \"IRanges\"))\n"))
   }
 }
-

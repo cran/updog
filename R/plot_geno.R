@@ -79,6 +79,7 @@ plot_geno <- function(refvec,
     use_colorblind <- FALSE
   }
 
+  .data <- NULL ## stupid work around for ggplot2 and R CMD check
   assertthat::assert_that(all(refvec >= 0, na.rm = TRUE))
   assertthat::assert_that(all(sizevec >= refvec, na.rm = TRUE))
   assertthat::assert_that(ploidy >= 1)
@@ -108,14 +109,14 @@ plot_geno <- function(refvec,
 
   ## Plot children
   if (is.null(maxpostprob)) {
-    pl <- ggplot2::ggplot(data = dfdat, mapping = ggplot2::aes_string(y = "A", x = "a"))
+    pl <- ggplot2::ggplot(data = dfdat, mapping = ggplot2::aes(y = .data[["A"]], x = .data[["a"]]))
   } else {
-    pl <- ggplot2::ggplot(data = dfdat, mapping = ggplot2::aes_string(y = "A", x = "a", alpha = "maxpostprob"))
+    pl <- ggplot2::ggplot(data = dfdat, mapping = ggplot2::aes(y = .data[["A"]], x = .data[["a"]], alpha = .data[["maxpostprob"]]))
   }
 
   ## add offspring genotypes ------------------------------------------------
   if (!is.null(geno)) {
-    pl <- pl + ggplot2::geom_point(ggplot2::aes_string(color = "genotype"))
+    pl <- pl + ggplot2::geom_point(ggplot2::aes(color = .data[["genotype"]]))
   } else {
     pl <- pl + ggplot2::geom_point()
   }
@@ -125,7 +126,7 @@ plot_geno <- function(refvec,
     ggplot2::ylim(0, maxcount) +
     ggplot2::ylab("Counts A") +
     ggplot2::xlab("Counts a")  +
-    ggplot2::geom_segment(data = df_lines, mapping = ggplot2::aes_string(x = "x", y = "y", xend = "xend", yend = "yend"),
+    ggplot2::geom_segment(data = df_lines, mapping = ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]]),
                           lty = 2, alpha = 1/2, color = "black", size = 0.5)
 
   ## add parents if we have them
@@ -143,7 +144,7 @@ plot_geno <- function(refvec,
     p1dat <- data.frame(A = p1ref, a = p1size - p1ref)
     if (!is.null(p1geno)) {
       p1dat$genotype <- factor(p1geno, levels = 0:ploidy)
-      pl <- pl + ggplot2::geom_point(data = p1dat, mapping = ggplot2::aes_string(color = "genotype"),
+      pl <- pl + ggplot2::geom_point(data = p1dat, mapping = ggplot2::aes(color = .data[["genotype"]]),
                                      size = 3, pch = 3, alpha = 1, show.legend = FALSE)
       pl <- pl + ggplot2::geom_point(data = p1dat, size = 1, color = "black", pch = 16, alpha = 1)
     } else {
@@ -164,7 +165,7 @@ plot_geno <- function(refvec,
     p2dat <- data.frame(A = p2ref, a = p2size - p2ref)
     if (!is.null(p2geno)) {
       p2dat$genotype <- factor(p2geno, levels = 0:ploidy)
-      pl <- pl + ggplot2::geom_point(data = p2dat, mapping = ggplot2::aes_string(color = "genotype"),
+      pl <- pl + ggplot2::geom_point(data = p2dat, mapping = ggplot2::aes(color = .data[["genotype"]]),
                                      size = 3, pch = 4, alpha = 1, show.legend = FALSE)
       pl <- pl + ggplot2::geom_point(data = p2dat, size = 1, color = "black", pch = 16, alpha = 1)
     } else {
@@ -175,13 +176,11 @@ plot_geno <- function(refvec,
 
   ## Set color scale based on use_colorblind --------------------------------------
   if (!is.null(geno) | !is.null(p1geno) | !is.null(p2geno)) {
-    if (use_colorblind & requireNamespace("ggthemes", quietly = TRUE)) {
-      possible_colors <- paste0(ggthemes::colorblind_pal()(ploidy + 1))
+    if (use_colorblind) {
+      palvec <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+      possible_colors <- palvec[1:(ploidy + 1)]
       possible_colors <- possible_colors[rev(seq_along(possible_colors))]
       pl <- pl + ggplot2::scale_color_manual(values = possible_colors, drop = FALSE, na.translate = TRUE, na.value = "gray50")
-    } else if (use_colorblind) {
-      pl <- pl + ggplot2::scale_color_hue(drop = FALSE, na.translate = TRUE, na.value = "gray50")
-      warning("ggthemes needs to be installed to set use_colorblind = TRUE.")
     } else {
       pl <- pl + ggplot2::scale_color_hue(drop = FALSE, na.translate = TRUE, na.value = "gray50")
     }

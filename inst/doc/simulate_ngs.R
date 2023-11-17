@@ -6,7 +6,7 @@ knitr::opts_chunk$set(
   fig.height=3.5
 )
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 set.seed(1)
 library(updog)
 nind    <- 100
