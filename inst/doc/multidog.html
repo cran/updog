@@ -380,7 +380,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>If we want to do parallel computing, we should check that we have the proper number of cores:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>future<span class="op">::</span><span class="kw">availableCores</span>()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="co">#&gt; system </span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="co">#&gt;      8</span></span></code></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="co">#&gt;     16</span></span></code></pre></div>
 <p>Now let’s run <code>multidog()</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>mout &lt;-<span class="st"> </span><span class="kw">multidog</span>(<span class="dt">refmat =</span> refmat, </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>                 <span class="dt">sizemat =</span> sizemat, </span>
